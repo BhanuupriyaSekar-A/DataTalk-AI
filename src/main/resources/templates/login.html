@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTalk AI - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/datatalk/static/css/style.css">
+</head>
+<body class="login-body">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg login-card">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h1 class="h3 fw-bold text-primary">DataTalk AI</h1>
+                            <p class="text-muted">Natural Language Business Data Analytics</p>
+                        </div>
+
+                        <!-- Alert Messages -->
+                        <div id="alertContainer">
+                            <!-- Errors will be shown here -->
+                        </div>
+
+                        <!-- Login Form -->
+                        <form id="loginForm" class="needs-validation">
+                            <!-- Username Field -->
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       placeholder="Enter your username" required autofocus>
+                                <small class="form-text text-muted">Demo user: admin_user</small>
+                            </div>
+
+                            <!-- Password Field -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       placeholder="Enter your password" required>
+                                <small class="form-text text-muted">Demo password: DemoPass@123</small>
+                            </div>
+
+                            <!-- Remember Me -->
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe">
+                                <label class="form-check-label" for="rememberMe">
+                                    Remember me
+                                </label>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button type="submit" class="btn btn-primary w-100 mb-3" id="loginBtn">
+                                <span id="btnText">Sign In</span>
+                                <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                            </button>
+                        </form>
+
+                        <!-- Demo Credentials -->
+                        <hr>
+                        <div class="alert alert-info small">
+                            <strong>Demo Credentials:</strong><br>
+                            <small>
+                                Username: <code>admin_user</code><br>
+                                Password: <code>DemoPass@123</code><br>
+                                <br>
+                                Also try: <code>techpay_manager</code>, <code>retail_manager</code>, <code>restaurant_owner</code>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center mt-4 text-muted small">
+                    <p>&copy; 2026 DataTalk AI. All rights reserved.</p>
+                    <p><a href="/datatalk/poc-info" class="text-decoration-none">Project Information</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showAlert('Please enter username and password', 'warning');
+                return;
+            }
+
+            // Show loading state
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+            
+            loginBtn.disabled = true;
+            btnText.textContent = 'Signing In...';
+            spinner.classList.remove('d-none');
+
+            try {
+                const response = await fetch('/datatalk/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/datatalk/dashboard';
+                    }, 1000);
+                } else {
+                    showAlert(data.message || data.error || 'Login failed', 'danger');
+                    loginBtn.disabled = false;
+                    btnText.textContent = 'Sign In';
+                    spinner.classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('An error occurred during login', 'danger');
+                loginBtn.disabled = false;
+                btnText.textContent = 'Sign In';
+                spinner.classList.add('d-none');
+            }
+        });
+
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Handle URL parameters
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('error')) showAlert('Invalid credentials', 'danger');
+        if (params.get('logout')) showAlert('You have been logged out', 'info');
+        if (params.get('expired')) showAlert('Your session has expired', 'warning');
+    </script>
+</body>
+</html>

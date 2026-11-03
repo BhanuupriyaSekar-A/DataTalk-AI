@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTalk AI - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/datatalk/static/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/datatalk/dashboard">
+                <i class="fas fa-brain"></i> DataTalk AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/datatalk/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/datatalk/chat">AI Chat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/datatalk/poc-info">Project Info</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <span id="userDisplay">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <h1 class="h3 mb-0">Welcome, <span id="fullNameDisplay">User</span>!</h1>
+                        <p class="text-muted mb-0">Welcome back to DataTalk AI - Your Natural Language Business Data Analytics Platform</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Information Panel -->
+        <div class="row mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <p class="text-muted mb-2">User ID</p>
+                                <h5 id="userIdDisplay" class="mb-0">-</h5>
+                            </div>
+                            <i class="fas fa-user-circle text-primary" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <p class="text-muted mb-2">Role</p>
+                                <h5 id="roleDisplay" class="mb-0">-</h5>
+                            </div>
+                            <i class="fas fa-shield-alt text-success" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <p class="text-muted mb-2">Customer ID</p>
+                                <h5 id="customerIdDisplay" class="mb-0">-</h5>
+                            </div>
+                            <i class="fas fa-building text-info" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <p class="text-muted mb-2">Customer Name</p>
+                                <h5 id="customerNameDisplay" class="mb-0">-</h5>
+                            </div>
+                            <i class="fas fa-store text-warning" style="font-size: 2rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Summary Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="mb-3">Business Summary</h4>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="text-muted mb-2 small">Devices</p>
+                                <h3 id="deviceCount" class="mb-0">-</h3>
+                            </div>
+                            <i class="fas fa-mobile-alt text-primary" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                        </div>
+                        <small class="text-muted" id="activeDevicesText">- active</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="text-muted mb-2 small">Transactions (30d)</p>
+                                <h3 id="transactionCount" class="mb-0">-</h3>
+                            </div>
+                            <i class="fas fa-credit-card text-success" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                        </div>
+                        <small class="text-muted">Last 30 days</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="text-muted mb-2 small">Approved Amount (30d)</p>
+                                <h3 id="approvedAmount" class="mb-0">-</h3>
+                            </div>
+                            <i class="fas fa-dollar-sign text-info" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                        </div>
+                        <small class="text-muted">Approved transactions</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <p class="text-muted mb-2 small">Locations</p>
+                                <h3 id="locationCount" class="mb-0">-</h3>
+                            </div>
+                            <i class="fas fa-map-marker-alt text-warning" style="font-size: 2.5rem; opacity: 0.3;"></i>
+                        </div>
+                        <small class="text-muted">Active locations</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="alert alert-light border">
+                    <h5 class="mb-3"><i class="fas fa-info-circle text-info"></i> Next Phase</h5>
+                    <p class="mb-0">In the next development phase, we will add AI-powered natural language queries. Users will be able to ask questions about their business data in plain English, and our system will automatically generate and execute SQL queries to retrieve insights.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load user and dashboard data
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/datatalk/api/user-info');
+                const data = await response.json();
+
+                if (data.success) {
+                    const user = data.data;
+                    
+                    // Display user information
+                    document.getElementById('userDisplay').textContent = user.username;
+                    document.getElementById('fullNameDisplay').textContent = user.fullName || user.username;
+                    document.getElementById('userIdDisplay').textContent = user.userId;
+                    document.getElementById('roleDisplay').textContent = user.role;
+                    document.getElementById('customerIdDisplay').textContent = user.customerId || 'N/A (Admin)';
+                    document.getElementById('customerNameDisplay').textContent = user.customerName || 'N/A (Admin)';
+
+                    // Load dashboard summary
+                    loadDashboardSummary();
+                } else {
+                    window.location.href = '/datatalk/login';
+                }
+            } catch (error) {
+                console.error('Error loading user info:', error);
+                window.location.href = '/datatalk/login';
+            }
+        });
+
+        async function loadDashboardSummary() {
+            try {
+                const response = await fetch('/datatalk/api/dashboard/summary');
+                const data = await response.json();
+
+                if (data.success) {
+                    const summary = data.data;
+                    
+                    // Update dashboard display
+                    document.getElementById('deviceCount').textContent = summary.deviceCount || '0';
+                    document.getElementById('activeDevicesText').textContent = (summary.activeDevices || '0') + ' active';
+                    document.getElementById('transactionCount').textContent = summary.recentTransactions || '0';
+                    document.getElementById('approvedAmount').textContent = '$' + (summary.approvedAmount || '0').toFixed(2);
+                    document.getElementById('locationCount').textContent = summary.locationCount || '0';
+                }
+            } catch (error) {
+                console.error('Error loading dashboard summary:', error);
+            }
+        }
+
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await fetch('/datatalk/api/logout', { method: 'POST' });
+                    window.location.href = '/datatalk/login?logout=true';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

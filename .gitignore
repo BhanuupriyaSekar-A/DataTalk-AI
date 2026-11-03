@@ -1,0 +1,62 @@
+# Maven
+target/
+*.jar
+*.war
+*.ear
+*.class
+*.classpath
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.local
+*.properties.local
+
+# Database
+*.sql.bak
+.pgpass
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build
+build/
+dist/
+
+# Dependencies
+dependency-reduced-pom.xml
+
+# Test coverage
+.jacoco.exec
+target/site/
+
+# IDE files
+.classpath
+.factorypath
+.project
+.settings/
+
+# Node (if used)
+node_modules/
+npm-debug.log
+
+# Gradle (if used)
+.gradle
+build/
+
+# Other
+*.swp
+*.orig
