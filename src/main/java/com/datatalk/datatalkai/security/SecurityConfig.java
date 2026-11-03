@@ -20,35 +20,36 @@ public class SecurityConfig {
         http
                 // Authorize requests
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/datatalk/login", "/datatalk/api/login", "/datatalk/static/**").permitAll()
-                        .requestMatchers("/datatalk/health", "/datatalk/info", "/datatalk/poc-info").permitAll()
+                        .requestMatchers("/login", "/api/login", "/static/**").permitAll()
+                        .requestMatchers("/health", "/info", "/poc-info").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Login form
                 .formLogin(form -> form
-                        .loginPage("/datatalk/login")
-                        .loginProcessingUrl("/datatalk/login")
-                        .defaultSuccessUrl("/datatalk/dashboard", true)
-                        .failureUrl("/datatalk/login?error=true")
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/dashboard", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 // Logout
                 .logout(logout -> logout
-                        .logoutUrl("/datatalk/logout")
-                        .logoutSuccessUrl("/datatalk/login?logout=true")
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-                // CSRF Protection
+                // CSRF Protection (disabled for API endpoints)
                 .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 // Session Configuration
                 .sessionManagement(session -> session
                         .sessionConcurrency(concurrency -> concurrency
                                 .maximumSessions(1)
-                                .expiredUrl("/datatalk/login?expired=true")
+                                .expiredUrl("/login?expired=true")
                         )
                 );
 

@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpSession;
  * Handles navigation to HTML pages
  */
 @Controller
-@RequestMapping("/datatalk")
+@RequestMapping("")
 public class PageController {
 
     /**
@@ -28,7 +28,7 @@ public class PageController {
     public String dashboard(HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            return "redirect:/datatalk/login";
+            return "redirect:/login";
         }
         return "dashboard";
     }
@@ -40,7 +40,7 @@ public class PageController {
     public String chat(HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            return "redirect:/datatalk/login";
+            return "redirect:/login";
         }
         return "chat";
     }
@@ -58,6 +58,6 @@ public class PageController {
      */
     @GetMapping("")
     public String root() {
-        return "redirect:/datatalk/login";
+        return "redirect:/login";
     }
 }

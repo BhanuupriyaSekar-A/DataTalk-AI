@@ -13,7 +13,7 @@ import java.util.Map;
  * REST API Controller for dashboard data
  */
 @RestController
-@RequestMapping("/datatalk/api/dashboard")
+@RequestMapping("/api/dashboard")
 public class DashboardApiController {
 
     @Autowired

@@ -16,7 +16,7 @@ import java.util.Optional;
  * Provides login, logout, and user info endpoints
  */
 @RestController
-@RequestMapping("/datatalk/api")
+@RequestMapping("/api")
 public class AuthApiController {
 
     @Autowired
