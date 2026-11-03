@@ -11,9 +11,10 @@ A revolutionary platform that enables business users to ask questions about thei
 ## Quick Start
 
 ### Prerequisites
-- Java 17+
-- Maven 3.8+
-- PostgreSQL 13+ or Neon account
+- ✅ Java 17+ (verified: OpenJDK 17.0.20.1)
+- ✅ Maven 3.8+ (verified: Apache Maven 3.8.8) 
+- ✅ Neon PostgreSQL account (created)
+- ✅ Build successful: JAR created (25.43 MB)
 
 ### 1. Database Setup
 

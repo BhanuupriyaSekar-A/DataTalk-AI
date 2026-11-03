@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>DataTalk AI POC</name>
-    <description>DataTalk AI - Natural Language Business Data Analytics (Step 1: Database & Login)</description>
+    <description>DataTalk AI - Natural Language Business Data Analytics (Step 1: Database and Login)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

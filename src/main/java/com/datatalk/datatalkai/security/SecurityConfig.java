@@ -21,7 +21,7 @@ public class SecurityConfig {
                 // Authorize requests
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/datatalk/login", "/datatalk/api/login", "/datatalk/static/**").permitAll()
-                        .requestMatchers("/datatalk/health", "/datatalk/info").permitAll()
+                        .requestMatchers("/datatalk/health", "/datatalk/info", "/datatalk/poc-info").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Login form
@@ -46,7 +46,6 @@ public class SecurityConfig {
                 )
                 // Session Configuration
                 .sessionManagement(session -> session
-                        .sessionFixationProtection(org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer.SessionFixationProtectionStrategy.newSession)
                         .sessionConcurrency(concurrency -> concurrency
                                 .maximumSessions(1)
                                 .expiredUrl("/datatalk/login?expired=true")
