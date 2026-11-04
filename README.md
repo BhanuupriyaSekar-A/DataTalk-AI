@@ -1,5 +1,7 @@
 # DataTalk AI – Natural-Language Reporting POC
 
+> **Built by Vijay | DataTalk AI**
+
 DataTalk AI is a personal proof of concept. Users log in, ask business questions in plain English, and get
 database-backed reports. An AI model generates PostgreSQL SQL. The backend validates it, applies the user's
 role and customer restrictions, and runs it read-only. The results are shown as a table and chart, and can be

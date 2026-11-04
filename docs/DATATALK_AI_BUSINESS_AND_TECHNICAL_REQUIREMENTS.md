@@ -7,7 +7,7 @@
 | Document type | Business and technical requirements proposal |
 | Intended audience | Company AI/ML team, solution architects, development team, business stakeholders |
 | Status | Draft for evaluation |
-| Prepared by | Initiative owner (independent proof of concept author) |
+| Prepared by | Vijay (independent proof of concept author) – Built by Vijay \| DataTalk AI |
 
 > **How to read this document**
 > This document describes **what** the company needs and **what the expected solution must deliver**.
