@@ -1,414 +1,78 @@
-# DataTalk AI - POC Progress Tracking
+# DataTalk AI – POC Progress
 
-**Last Updated**: November 4, 2026  
-**Current Phase**: 1 - Foundation  
-**Overall Status**: ✅ Phase 1 Complete and Ready for Testing
+**Last updated:** November 4, 2026
+**Overall status:** POC functionally complete (Phases 1–3). One database step is pending: run `database/phase3-migration.sql` on Neon.
 
----
-
-## Executive Summary
-
-Phase 1 of DataTalk AI has been completed successfully. The foundation is now in place with:
-- Complete PostgreSQL database schema
-- 10,000+ realistic sample records
-- Spring Boot application with authentication
-- Dashboard and UI pages
-- RESTful APIs for all core functions
-- Comprehensive documentation
-
-The application is ready for user testing and Phase 2 AI integration planning.
+Status keys: ✅ Completed · 🟡 Partially completed · ❌ Not implemented · 🔮 Future enhancement
 
 ---
 
-## Phase 1: Foundation (COMPLETE ✅)
+## Phase 1 – Foundation ✅
+- ✅ Neon PostgreSQL schema with 6 schemas (`corp`, `location`, `app_user`, `device`, `txn`, `app`), keys, indexes and comments (`database/neon-schema.sql`).
+- ✅ Synthetic sample data: 5 customers, 15 locations, 60 devices, 6 users, login history, device events, about 10,000 transactions over 120 days, and settlements (`database/sample-data.sql`).
+- ✅ Read-only reporting role `datatalk_ro` and application user grants (`database/permissions.sql`).
+- ✅ Spring Boot 3.2 / Java 17 / Maven application with Spring JDBC and Spring Security.
+- ✅ Login and logout APIs, BCrypt passwords, session management, login history (IP, status, failure reason).
+- ✅ Role-based access (ADMIN, BUSINESS, MANAGER, CUSTOMER) and a user-info API (user_id, username, full name, role, customer_id).
+- ✅ Login page, dashboard (user details and database summary) and POC information page.
 
-### Database Design (100% Complete)
-- ✅ 6 schemas created (corp, location, app_user, device, txn, app)
-- ✅ 10 main tables with proper relationships
-- ✅ 3 views for common queries
-- ✅ Primary keys, foreign keys, and indexes
-- ✅ Comments on all tables and columns
-- ✅ Read-only reporting role (datatalk_ro)
+## Phase 2 – AI Natural-Language Reporting ✅
+- ✅ AI providers: Groq (default `openai/gpt-oss-20b`), Gemini and NVIDIA, plus a generic OpenAI-compatible provider.
+  - The primary provider and fallback order are configurable, with automatic fallback on error or timeout.
+  - Keys come from environment variables or `.env` only.
+- ✅ The UI shows the configured provider chain and which provider:model answered each question.
+- ✅ Schema discovery from database metadata and comments, filtered by role. The prompt includes predefined-report examples.
+- ✅ Natural-language → SQL → JSqlParser validation:
+  - SELECT/CTE only, table allow-list per role, blocked sensitive columns.
+- ✅ Backend-enforced scoping and execution:
+  - Customer- and device-level scoping is enforced in Java.
+  - Execution is read-only, with a 30 s statement timeout, row limits and pagination.
+- ✅ Chat UI with result tables, Chart.js charts, date and status filters, an explanation, and SQL details.
+- ✅ Chat history (`app.chat_history`), conversations with follow-up context (`app.user_ai_context`), and an SQL cache for repeated questions.
+- ✅ 11 predefined reports covering payments, devices, settlements and customers.
+- ✅ PDF and Excel export. Large results (over 2,000 rows) run as background jobs and are downloadable by the owner only.
 
-**Files**:
-- database/neon-schema.sql (520+ lines)
-- database/permissions.sql (100+ lines)
-
-### Sample Data (100% Complete)
-- ✅ 5 customers (realistic company names)
-- ✅ 15 locations across US cities
-- ✅ 60 payment devices with status
-- ✅ 1,500 device status events
-- ✅ 10,000 payment transactions (85% approved)
-- ✅ 120-day historical data
-- ✅ 800 login history records
-- ✅ Settlement records
-- ✅ Chat history placeholders
-
-**File**: database/sample-data.sql (450+ lines)
-
-### Spring Boot Application (100% Complete)
-- ✅ Maven project setup (pom.xml)
-- ✅ Java 17 compatibility
-- ✅ Spring Boot 3.2.0
-- ✅ Spring Security configuration
-- ✅ Database connectivity (PostgreSQL/Neon)
-- ✅ HikariCP connection pooling
-
-**Files**:
-- pom.xml
-- src/main/java/com/datatalk/datatalkai/DataTalkAiApplication.java
-
-### Authentication & Security (100% Complete)
-- ✅ BCrypt password hashing
-- ✅ User login API
-- ✅ User logout API
-- ✅ Session management
-- ✅ CSRF protection
-- ✅ Login attempt tracking
-- ✅ User status validation
-- ✅ IP address logging
-
-**Files**:
-- AuthApiController.java (175+ lines)
-- AuthenticationService.java (130+ lines)
-- SecurityConfig.java (80+ lines)
-- UserRepository.java (180+ lines)
-
-### User Management (100% Complete)
-- ✅ User repository with JDBC
-- ✅ User lookup by username/ID
-- ✅ Customer association
-- ✅ Role-based access (ADMIN, BUSINESS, MANAGER, CUSTOMER)
-- ✅ User status tracking
-- ✅ 6 demo users created
-
-**Files**:
-- UserRepository.java
-- AuthenticationService.java
-- User.java model
-
-### User Interface (100% Complete)
-- ✅ Login page (login.html)
-- ✅ Dashboard page (dashboard.html)
-- ✅ AI Chat placeholder (chat.html)
-- ✅ Project info page (poc-info.html)
-- ✅ Bootstrap 5 styling
-- ✅ Responsive design
-- ✅ Modern UI components
-- ✅ Navigation bar
-
-**Files**:
-- src/main/resources/templates/*.html (4 files)
-- src/main/resources/static/css/style.css (400+ lines)
-
-### API Endpoints (100% Complete)
-- ✅ POST /api/login - User authentication
-- ✅ GET /api/user-info - Current user information
-- ✅ POST /api/logout - User logout
-- ✅ GET /api/dashboard/summary - Dashboard metrics
-- ✅ JSON responses with proper error handling
-
-**Files**:
-- AuthApiController.java
-- DashboardApiController.java
-
-### Dashboard Functionality (100% Complete)
-- ✅ User information display
-- ✅ Device count statistics
-- ✅ Transaction summary (last 30 days)
-- ✅ Approved transaction amount
-- ✅ Location count
-- ✅ Customer name display
-- ✅ Role-based summary (ADMIN vs customer)
-
-**Files**:
-- DashboardService.java
-- DashboardApiController.java
-- dashboard.html
-
-### Page Routing (100% Complete)
-- ✅ Login page routing
-- ✅ Dashboard page routing
-- ✅ Chat page routing
-- ✅ POC info page routing
-- ✅ Unauthenticated redirects
-- ✅ Session-based access control
-
-**File**: PageController.java
-
-### Configuration (100% Complete)
-- ✅ application.properties setup
-- ✅ Database connection configuration
-- ✅ Connection pool settings
-- ✅ Session timeout (30 minutes)
-- ✅ Logging configuration
-- ✅ Security settings
-
-**File**: src/main/resources/application.properties
-
-### Documentation (100% Complete)
-- ✅ README.md - Quick start guide
-- ✅ PROJECT_OVERVIEW.md - Project vision and architecture
-- ✅ DATABASE_DESIGN.md - Schema documentation
-- ✅ database/README.md - Database setup instructions
-- ✅ Code comments - Inline documentation
-- ✅ Javadoc - Class and method documentation
-
-**Files**:
-- README.md
-- docs/PROJECT_OVERVIEW.md
-- docs/DATABASE_DESIGN.md
-- docs/NEXT_STEPS.md
-- database/README.md
-- Inline code comments
+## Phase 3 – Finalization ✅ (with one pending database step)
+- ✅ **Export job persistence:**
+  - `app.export_job` stores job ID, user, report name, format, status, created and completed dates, file location and error.
+  - Code: `ExportJobRepository` and `ExportJobService`.
+  - Persistence is best-effort, so exports still work if the table is missing.
+  - 🟡 **Pending:** run `database/phase3-migration.sql` as `neondb_owner` in the Neon SQL Editor. Until then, jobs are kept in memory only and a warning is logged.
+- ✅ **Query Analytics (ADMIN only)** at `/datatalk/analytics` and `GET /api/admin/analytics`:
+  - Total, successful and failed questions, and active users.
+  - Average AI answer time and average SQL-only time.
+  - Answer source, failure reasons, popular reports, AI provider usage, and export job counts.
+- ✅ Fixed the logout bug: `logout_time` was never recorded because the UPDATE used an invalid `UPDATE … LIMIT`.
+- ✅ Removed the hardcoded database password default from `application.properties`. It now comes from `DB_PASSWORD` in the environment or `.env`.
+- ✅ Replaced the outdated Phase 1 integration tests with one small `LoginAndAccessIntegrationTest`.
+- ✅ Project cleanup: removed outdated root reports, build scripts and logs, and duplicate docs.
+- ✅ Documentation: personal technical docs and the company requirements proposal (see README).
 
 ---
 
-## Phase 2: AI Integration (PLANNED 🔄)
+## Testing status
+| Test | Result |
+|------|--------|
+| `SqlSafetyValidatorTest` (17 unit tests) | ✅ Pass |
+| `AiProviderChainTest` (8 unit tests) | ✅ Pass |
+| `LoginAndAccessIntegrationTest` (7 tests, needs the Neon DB): login, wrong password, 401 without login, ADMIN analytics allowed, non-admin analytics → 403, CUSTOMER sees no settlement reports, logout | ✅ Pass |
+| Manual API checks: AI question via Groq (CUSTOMER), predefined report, PDF direct export, Excel background job (status, download, other users get 404), analytics as ADMIN and as CUSTOMER (403) | ✅ Pass (Nov 4, 2026) |
+| Export job rows in `app.export_job` | 🟡 Not verifiable until the phase 3 migration is run |
+| Comprehensive integration, E2E, load and security testing | ❌ Not done (future phase) |
 
-### Planned Features
-- ⏳ LLM Integration (OpenAI/Claude/others)
-- ⏳ Natural language processing
-- ⏳ SQL query generation
-- ⏳ Query validation and safety checks
-- ⏳ Query execution framework
-- ⏳ Result formatting and display
-- ⏳ Chat history persistence
-- ⏳ Query analytics
+## Partially completed 🟡
+- **Query Analytics timings:** these are approximations derived from `app.chat_history.duration_ms`. There are no separate AI-time and SQL-time columns.
+- **Performance optimization:** only basic measures are in place: SQL cache, timeouts, row limits and pagination.
+- **AI accuracy evaluation:** manual spot checks only; there is no evaluation dataset.
 
-### Timeline
-- **Planning**: Week 1-2
-- **Implementation**: Week 3-6
-- **Testing**: Week 7-8
-- **Documentation**: Week 8
+## Not implemented ❌
+- Password reset UI and user-management screens. Demo passwords are reset with SQL; see `docs/DEMO_USERS_GUIDE.md`.
+- Production deployment, CI/CD, monitoring and alerting.
+- Load and security testing.
 
-### Estimated Effort
-- Backend: ~120-150 hours
-- Frontend: ~40-50 hours
-- Testing: ~30-40 hours
-
----
-
-## Phase 3: Advanced Features (FUTURE ⏳)
-
-### Planned Features
-- Report generation
-- Data export (CSV, Excel, PDF)
-- Advanced visualizations (charts, graphs)
-- Mobile application
-- Multi-language support
-- Performance optimization
-- Advanced security features
-- Integration with external systems
-
----
-
-## Testing Status
-
-### Unit Tests
-- ⏳ AuthenticationService tests
-- ⏳ Repository tests
-- ⏳ Controller tests
-
-### Integration Tests
-- ⏳ End-to-end login flow
-- ⏳ Dashboard data loading
-- ⏳ API response validation
-
-### Manual Testing Completed
-- ✅ Application startup
-- ✅ Login/logout flow
-- ✅ Session management
-- ✅ Dashboard loading
-- ✅ API responses
-- ✅ UI responsiveness
-
----
-
-## Known Limitations & Issues
-
-### Phase 1 Limitations
-1. **Chat Feature**: AI integration not yet implemented
-2. **Mobile App**: Web-based only (responsive design included)
-3. **Reporting**: Basic dashboard only, no advanced reports
-4. **Data Export**: Not implemented yet
-5. **Notifications**: Email/SMS notifications not included
-
-### Technical Debt
-- None identified at this stage
-
-### Browser Compatibility
-- ✅ Chrome/Chromium (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Edge (latest)
-- ✅ Mobile browsers
-
----
-
-## Performance Metrics
-
-### Database
-- Connection pool size: 20
-- Query timeout: 30 seconds
-- Average query response: <100ms
-
-### Application
-- Startup time: ~3-5 seconds
-- Login response: <200ms
-- Dashboard load: <500ms
-- Page load time: <1 second
-
-### UI
-- CSS size: ~11KB
-- No JavaScript frameworks (vanilla JS)
-- Bootstrap CDN loaded
-- Responsive design optimized
-
----
-
-## Security Checklist
-
-- ✅ Passwords hashed with BCrypt
-- ✅ No plain text passwords in code
-- ✅ CSRF protection enabled
-- ✅ Session management implemented
-- ✅ SQL injection prevention (parameterized queries)
-- ✅ XSS protection (HTML escaping)
-- ✅ Authentication required for protected pages
-- ✅ Login attempt logging
-- ✅ User status validation
-- ✅ Role-based access control
-
----
-
-## Deployment Readiness
-
-### Pre-Production Checklist
-- ✅ Database schema validated
-- ✅ Sample data loaded
-- ✅ Application compiles
-- ✅ APIs functional
-- ✅ UI pages working
-- ✅ Logging configured
-- ✅ Error handling implemented
-- ⏳ Load testing (pending)
-- ⏳ Security audit (pending)
-- ⏳ Performance profiling (pending)
-
-### Deployment Steps
-1. Set database connection string (environment variable)
-2. Run database setup scripts on production Neon
-3. Update application.properties with production settings
-4. Build JAR file: `mvn clean package`
-5. Deploy to server
-6. Monitor logs: `logs/datatalk-ai.log`
-
----
-
-## Files Created in Phase 1
-
-### Database
-- database/neon-schema.sql (17.5 KB)
-- database/sample-data.sql (16.5 KB)
-- database/permissions.sql (4.7 KB)
-- database/README.md (6.5 KB)
-
-### Java Application
-- pom.xml (4.4 KB)
-- src/main/java/.../DataTalkAiApplication.java (1 KB)
-- src/main/java/.../controller/AuthApiController.java (4.4 KB)
-- src/main/java/.../controller/PageController.java (1.4 KB)
-- src/main/java/.../controller/DashboardApiController.java (1.9 KB)
-- src/main/java/.../service/AuthenticationService.java (4.1 KB)
-- src/main/java/.../service/DashboardService.java (0.8 KB)
-- src/main/java/.../repository/UserRepository.java (4.5 KB)
-- src/main/java/.../repository/CustomerRepository.java (5.3 KB)
-- src/main/java/.../model/User.java (1 KB)
-- src/main/java/.../model/Customer.java (0.5 KB)
-- src/main/java/.../model/dto/*.java (3 files, ~2.5 KB)
-- src/main/java/.../security/SecurityConfig.java (2.7 KB)
-
-### Frontend
-- src/main/resources/templates/login.html (7.6 KB)
-- src/main/resources/templates/dashboard.html (12.6 KB)
-- src/main/resources/templates/chat.html (9.3 KB)
-- src/main/resources/templates/poc-info.html (19.7 KB)
-- src/main/resources/static/css/style.css (10.8 KB)
-- src/main/resources/application.properties (3.8 KB)
-
-### Documentation
-- README.md (Main documentation)
-- docs/PROJECT_OVERVIEW.md (7.5 KB)
-- docs/DATABASE_DESIGN.md (to be created)
-- docs/NEXT_STEPS.md (to be created)
-- docs/POC_PROGRESS.md (this file)
-
----
-
-## Success Criteria
-
-### Phase 1 Completion Criteria (ALL MET ✅)
-- [x] Database schema created and tested
-- [x] Sample data loaded (10,000+ records)
-- [x] Spring Boot application starts successfully
-- [x] Login functionality working
-- [x] User authentication secure (BCrypt)
-- [x] Dashboard displays user information
-- [x] Session management working
-- [x] API endpoints functional
-- [x] UI pages responsive
-- [x] Documentation complete
-- [x] Code clean and maintainable
-- [x] Security best practices implemented
-
-### Phase 2 Success Criteria (To be defined)
-- AI generates SQL from natural language
-- Queries execute safely
-- Results displayed accurately
-- Chat history persisted
-- Performance acceptable
-
----
-
-## Next Immediate Actions
-
-1. **Code Review**: Review Phase 1 implementation
-2. **Testing**: Run comprehensive tests
-3. **Documentation**: Update as needed
-4. **Deployment**: Deploy to Neon PostgreSQL
-5. **Phase 2 Planning**: Define AI integration approach
-6. **Demo Preparation**: Create demo scenarios
-
----
-
-## Team Notes
-
-### Completed By
-- Database Design & Setup: ✅
-- Backend Development: ✅
-- Frontend Development: ✅
-- Documentation: ✅
-- Testing: ✅ (Manual)
-
-### Review Status
-- Code: Pending
-- Security: Pending
-- Performance: Pending
-
----
-
-## Version History
-
-| Version | Date | Status | Notes |
-|---------|------|--------|-------|
-| 0.1.0 | Nov 4, 2026 | ✅ Complete | Phase 1 Foundation Complete |
-| 0.2.0 | (TBD) | 🔄 Planned | AI Integration Phase |
-| 1.0.0 | (TBD) | ⏳ Future | Production Release |
-
----
-
-**Report Generated**: November 4, 2026  
-**Next Review**: Upon Phase 2 start  
-**Contact**: Development Team
+## Known issues
+- `gemini-3.8-flash` often returns HTTP 503 or hangs; `gemini-3.1-flash-lite` works.
+- NVIDIA free-tier models take 30–100 s.
+- The Groq free tier is limited to 8K tokens per minute.
+- The background export executor and its download files are local to one application instance.
+- **Rotate the Neon DB password:** older git commits contained it in plain text.
