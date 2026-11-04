@@ -43,16 +43,16 @@ INSERT INTO location.location (customer_id, location_name, city, state, timezone
 -- =====================================================================
 -- SAMPLE DATA - APP_USER.APP_USER (6 users with BCrypt hashed passwords)
 -- Password info: All demo users use password "DemoPass@123"
--- BCrypt hash: $2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW
+-- BCrypt hash: $2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa
 -- For production, use strong passwords and rotate regularly
 -- =====================================================================
 INSERT INTO app_user.app_user (username, password_hash, full_name, email, role, customer_id, status, created_date) VALUES
-('admin_user', '$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW', 'Admin System', 'admin@datatalk.com', 'ADMIN', NULL, 'ACTIVE', NOW() - INTERVAL '120 days'),
-('techpay_manager', '$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW', 'John Manager', 'john.manager@techpay.com', 'BUSINESS', 1, 'ACTIVE', NOW() - INTERVAL '115 days'),
-('techpay_customer', '$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW', 'Sarah Customer', 'sarah@techpay.com', 'CUSTOMER', 1, 'ACTIVE', NOW() - INTERVAL '110 days'),
-('retail_manager', '$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW', 'Mike Retail', 'mike@retailhub.com', 'MANAGER', 2, 'ACTIVE', NOW() - INTERVAL '85 days'),
-('restaurant_owner', '$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW', 'David Chef', 'david@restgrp.com', 'BUSINESS', 3, 'ACTIVE', NOW() - INTERVAL '55 days'),
-('gas_operator', '$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW', 'Emma Operator', 'emma@gasnet.com', 'CUSTOMER', 4, 'ACTIVE', NOW() - INTERVAL '42 days');
+('admin_user', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Admin System', 'admin@datatalk.com', 'ADMIN', NULL, 'ACTIVE', NOW() - INTERVAL '120 days'),
+('techpay_manager', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'John Manager', 'john.manager@techpay.com', 'BUSINESS', 1, 'ACTIVE', NOW() - INTERVAL '115 days'),
+('techpay_customer', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Sarah Customer', 'sarah@techpay.com', 'CUSTOMER', 1, 'ACTIVE', NOW() - INTERVAL '110 days'),
+('retail_manager', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Mike Retail', 'mike@retailhub.com', 'MANAGER', 2, 'ACTIVE', NOW() - INTERVAL '85 days'),
+('restaurant_owner', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'David Chef', 'david@restgrp.com', 'BUSINESS', 3, 'ACTIVE', NOW() - INTERVAL '55 days'),
+('gas_operator', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Emma Operator', 'emma@gasnet.com', 'CUSTOMER', 4, 'ACTIVE', NOW() - INTERVAL '42 days');
 
 -- =====================================================================
 -- SAMPLE DATA - DEVICE.DEVICE (60 devices)

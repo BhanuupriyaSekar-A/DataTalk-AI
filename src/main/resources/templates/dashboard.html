@@ -26,6 +26,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/datatalk/chat">AI Chat</a>
                     </li>
+                    <li class="nav-item d-none" id="analyticsNav">
+                        <a class="nav-link" href="/datatalk/analytics">Analytics</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/datatalk/poc-info">Project Info</a>
                     </li>
@@ -214,6 +217,7 @@
                     document.getElementById('roleDisplay').textContent = user.role;
                     document.getElementById('customerIdDisplay').textContent = user.customerId || 'N/A (Admin)';
                     document.getElementById('customerNameDisplay').textContent = user.customerName || 'N/A (Admin)';
+                    if (user.role === 'ADMIN') document.getElementById('analyticsNav').classList.remove('d-none');
 
                     // Load dashboard summary
                     loadDashboardSummary();

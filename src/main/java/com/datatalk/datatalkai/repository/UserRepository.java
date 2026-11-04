@@ -37,7 +37,8 @@ public class UserRepository {
 
     private static final String LOG_LOGOUT = 
         "UPDATE app_user.user_login_history SET logout_time = CURRENT_TIMESTAMP " +
-        "WHERE user_id = ? AND logout_time IS NULL LIMIT 1";
+        "WHERE login_id = (SELECT login_id FROM app_user.user_login_history " +
+        "WHERE user_id = ? AND status = 'SUCCESS' AND logout_time IS NULL ORDER BY login_time DESC LIMIT 1)";
 
     private final RowMapper<User> userRowMapper = new RowMapper<User>() {
         @Override

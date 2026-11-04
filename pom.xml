@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>DataTalk AI POC</name>
-    <description>DataTalk AI - Natural Language Business Data Analytics (Step 1: Database and Login)</description>
+    <description>DataTalk AI - Natural Language Business Data Analytics (Phase 2: AI Natural Language Reporting)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.1</version>
+            <version>42.7.4</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -72,6 +72,27 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- Phase 2: SQL parsing / validation of AI-generated SQL -->
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>4.9</version>
+        </dependency>
+
+        <!-- Phase 2: PDF export (default report format) -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.43</version>
+        </dependency>
+
+        <!-- Phase 2: Excel export (streaming SXSSF) -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.5</version>
         </dependency>
 
         <!-- Lombok for reducing boilerplate -->

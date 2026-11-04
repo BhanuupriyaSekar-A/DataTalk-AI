@@ -8,7 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,6 +30,8 @@ public class AuthApiController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+
     /**
      * Login API endpoint
      * Accepts username and password, returns user info on success
@@ -30,6 +40,7 @@ public class AuthApiController {
     public ResponseEntity<ApiResponse<UserInfoResponse>> login(
             @RequestBody LoginRequest loginRequest,
             HttpServletRequest request,
+            HttpServletResponse response,
             HttpSession session) {
 
         // Validate input
@@ -58,8 +69,19 @@ public class AuthApiController {
                     .body(ApiResponse.error("INVALID_CREDENTIALS", "Invalid username or password"));
         }
 
-        // Store user info in session
         UserInfoResponse userInfo = userOpt.get();
+
+        // Prevent session fixation, then register the login with Spring Security so that
+        // protected pages and APIs (anyRequest().authenticated()) accept this session.
+        request.changeSessionId();
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(
+                userInfo.getUsername(), null,
+                List.of(new SimpleGrantedAuthority("ROLE_" + userInfo.getRole()))));
+        SecurityContextHolder.setContext(context);
+        securityContextRepository.saveContext(context, request, response);
+
+        // Store user info in session
         session.setAttribute("userId", userInfo.getUserId());
         session.setAttribute("username", userInfo.getUsername());
         session.setAttribute("role", userInfo.getRole());
@@ -102,6 +124,7 @@ public class AuthApiController {
             authenticationService.logout(userId);
         }
 
+        SecurityContextHolder.clearContext();
         session.invalidate();
         return ResponseEntity.ok(ApiResponse.success("", "Logout successful"));
     }

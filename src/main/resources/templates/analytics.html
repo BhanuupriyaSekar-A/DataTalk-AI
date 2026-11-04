@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTalk AI - Query Analytics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/datatalk/static/css/style.css">
+    <style>
+        .kpi h3 { margin: 0; }
+        .table-sm td, .table-sm th { font-size: .85rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/datatalk/dashboard"><i class="fas fa-brain"></i> DataTalk AI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/datatalk/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/datatalk/chat">AI Chat</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/datatalk/analytics">Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/datatalk/poc-info">Project Info</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0"><i class="fas fa-chart-line"></i> Query Analytics <span class="badge bg-secondary fs-6">ADMIN</span></h4>
+            <select id="days" class="form-select form-select-sm w-auto">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="0">All time</option>
+            </select>
+        </div>
+        <div id="error" class="alert alert-danger d-none"></div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-2"><div class="card kpi"><div class="card-body"><small class="text-muted">Total questions</small><h3 id="k_total">-</h3></div></div></div>
+            <div class="col-6 col-md-2"><div class="card kpi"><div class="card-body"><small class="text-muted">Successful</small><h3 id="k_ok" class="text-success">-</h3></div></div></div>
+            <div class="col-6 col-md-2"><div class="card kpi"><div class="card-body"><small class="text-muted">Failed / rejected</small><h3 id="k_fail" class="text-danger">-</h3></div></div></div>
+            <div class="col-6 col-md-2"><div class="card kpi"><div class="card-body"><small class="text-muted">Active users</small><h3 id="k_users">-</h3></div></div></div>
+            <div class="col-6 col-md-2"><div class="card kpi"><div class="card-body"><small class="text-muted">Avg AI answer time</small><h3 id="k_ai">-</h3></div></div></div>
+            <div class="col-6 col-md-2"><div class="card kpi"><div class="card-body"><small class="text-muted">Avg SQL-only time</small><h3 id="k_sql">-</h3></div></div></div>
+        </div>
+        <p class="small text-muted">
+            AI answer time = end-to-end time of successful AI-generated answers (AI call + validation + query).
+            SQL-only time = cached or predefined answers, which skip the AI call. Values come from <code>app.chat_history.duration_ms</code>.
+        </p>
+
+        <div class="row g-3">
+            <div class="col-md-6"><div class="card"><div class="card-header">Popular reports</div><div class="card-body p-0" id="t_reports"></div></div></div>
+            <div class="col-md-6"><div class="card"><div class="card-header">AI provider usage</div><div class="card-body p-0" id="t_providers"></div></div></div>
+            <div class="col-md-4"><div class="card"><div class="card-header">Answer source</div><div class="card-body p-0" id="t_source"></div></div></div>
+            <div class="col-md-4"><div class="card"><div class="card-header">Failure reasons</div><div class="card-body p-0" id="t_failures"></div></div></div>
+            <div class="col-md-4"><div class="card"><div class="card-header">Export jobs</div><div class="card-body p-0" id="t_exports"></div></div></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="none">
+            return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+        }
+        function ms(v) { return v == null ? 'n/a' : (v >= 1000 ? (v / 1000).toFixed(1) + ' s' : v + ' ms'); }
+        function table(id, rows, cols) {
+            const el = document.getElementById(id);
+            if (!rows || rows.length === 0) { el.innerHTML = '<p class="text-muted small m-3">No data for this period.</p>'; return; }
+            el.innerHTML = '<table class="table table-sm table-striped mb-0"><thead><tr>' +
+                cols.map(c => '<th>' + esc(c[1]) + '</th>').join('') + '</tr></thead><tbody>' +
+                rows.map(r => '<tr>' + cols.map(c => '<td>' + esc(c[2] ? c[2](r[c[0]]) : r[c[0]]) + '</td>').join('') + '</tr>').join('') +
+                '</tbody></table>';
+        }
+        async function load() {
+            const err = document.getElementById('error');
+            err.classList.add('d-none');
+            try {
+                const res = await fetch('/datatalk/api/admin/analytics?days=' + document.getElementById('days').value);
+                if (res.status === 401) { window.location.href = '/datatalk/login'; return; }
+                const body = await res.json();
+                if (!res.ok || !body.success) throw new Error(body.message || ('HTTP ' + res.status));
+                const d = body.data, t = d.totals;
+                document.getElementById('k_total').textContent = t.total_questions;
+                document.getElementById('k_ok').textContent = t.successful;
+                document.getElementById('k_fail').textContent = t.failed;
+                document.getElementById('k_users').textContent = t.active_users;
+                document.getElementById('k_ai').textContent = ms(t.avg_ai_answer_ms);
+                document.getElementById('k_sql').textContent = ms(t.avg_sql_execution_ms);
+                table('t_reports', d.popularReports, [['report_title', 'Report'], ['source', 'Source'], ['runs', 'Runs']]);
+                table('t_providers', d.providerUsage, [['provider', 'Provider:model'], ['questions', 'Questions'], ['successful', 'OK'], ['failed', 'Failed'], ['avg_ms', 'Avg time', ms]]);
+                table('t_source', d.bySource, [['source', 'Source'], ['questions', 'Questions'], ['avg_ms', 'Avg time', ms]]);
+                table('t_failures', d.failureReasons, [['reason', 'Reason'], ['count', 'Count']]);
+                table('t_exports', d.exports, [['export_format', 'Format'], ['job_status', 'Status'], ['count', 'Count']]);
+            } catch (e) {
+                err.textContent = 'Could not load analytics: ' + e.message;
+                err.classList.remove('d-none');
+            }
+        }
+        async function logout() {
+            try { await fetch('/datatalk/api/logout', {method: 'POST'}); } finally { window.location.href = '/datatalk/login?logout=true'; }
+        }
+        document.getElementById('days').addEventListener('change', load);
+        load();
+    </script>
+</body>
+</html>

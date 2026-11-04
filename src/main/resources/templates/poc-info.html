@@ -44,343 +44,160 @@
 
     <!-- Main Content -->
     <div class="container py-5">
-        <!-- Header -->
-        <div class="row mb-5">
+        <div class="row mb-4">
             <div class="col-md-12">
-                <h1 class="display-4 fw-bold mb-3"><i class="fas fa-project-diagram text-primary"></i> DataTalk AI</h1>
-                <p class="lead text-muted">Natural Language Business Data Analytics - Proof of Concept (POC)</p>
+                <h1 class="display-5 fw-bold mb-2"><i class="fas fa-project-diagram text-primary"></i> DataTalk AI</h1>
+                <p class="lead text-muted mb-1">AI-powered natural-language database reporting &ndash; personal Proof of Concept</p>
+                <span class="badge bg-success">POC complete (Phases 1&ndash;3)</span>
+                <span class="badge bg-warning text-dark">1 pending DB step: phase3-migration.sql</span>
             </div>
         </div>
 
-        <!-- Overview Section -->
+        <!-- Overview -->
         <div class="row mb-5">
             <div class="col-md-12">
                 <h2 class="h3 fw-bold mb-3">Project Overview</h2>
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <p>DataTalk AI is a revolutionary platform that allows business users to ask questions about their data in natural language. Instead of writing complex SQL queries or struggling with traditional analytics tools, users can simply type or speak their questions, and our AI system automatically generates and executes the necessary queries.</p>
-                        <p class="mb-0"><strong>Target Users:</strong> Business managers, finance teams, and decision-makers who need quick insights from their operational databases.</p>
-                    </div>
-                </div>
+                <div class="card border-0 shadow-sm"><div class="card-body">
+                    <p>Users log in and ask business questions in plain English. An AI model generates PostgreSQL SQL;
+                        the backend validates it, applies the user's role and customer restrictions and runs it read-only.
+                        Results are shown as tables and charts and can be exported to PDF or Excel.</p>
+                    <p class="mb-0"><strong>Sample domain:</strong> cashless payments and device management (synthetic data only).</p>
+                </div></div>
             </div>
         </div>
 
-        <!-- Features Section -->
+        <!-- How it works -->
         <div class="row mb-5">
             <div class="col-md-12">
-                <h2 class="h3 fw-bold mb-3">Features & Technology Stack</h2>
+                <h2 class="h3 fw-bold mb-3">How It Works</h2>
+                <div class="row text-center g-3">
+                    <div class="col-md"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h3 class="text-primary">1</h3><h6>Ask</h6><p class="small text-muted mb-0">Question in plain English</p></div></div></div>
+                    <div class="col-md"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h3 class="text-info">2</h3><h6>Generate SQL</h6><p class="small text-muted mb-0">Role-filtered schema sent to Groq / Gemini / NVIDIA (with fallback)</p></div></div></div>
+                    <div class="col-md"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h3 class="text-warning">3</h3><h6>Validate</h6><p class="small text-muted mb-0">JSqlParser: SELECT/CTE only, allowed tables, blocked columns</p></div></div></div>
+                    <div class="col-md"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h3 class="text-danger">4</h3><h6>Execute</h6><p class="small text-muted mb-0">Read-only, customer/device scoped, 30 s timeout, row limits</p></div></div></div>
+                    <div class="col-md"><div class="card border-0 shadow-sm h-100"><div class="card-body"><h3 class="text-success">5</h3><h6>Show &amp; export</h6><p class="small text-muted mb-0">Table, chart, filters, pagination, PDF / Excel</p></div></div></div>
+                </div>
             </div>
         </div>
 
+        <!-- Features -->
         <div class="row mb-5">
+            <div class="col-md-12"><h2 class="h3 fw-bold mb-3">Features</h2></div>
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-primary text-white border-0">
-                        <h5 class="mb-0"><i class="fas fa-check"></i> Phase 1: Foundation (Current)</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-check-circle text-success"></i> PostgreSQL Database Design</li>
-                            <li><i class="fas fa-check-circle text-success"></i> User Authentication & Roles</li>
-                            <li><i class="fas fa-check-circle text-success"></i> Login/Logout System</li>
-                            <li><i class="fas fa-check-circle text-success"></i> Dashboard & User Info</li>
-                            <li><i class="fas fa-check-circle text-success"></i> Session Management</li>
-                            <li><i class="fas fa-check-circle text-success"></i> Role-Based Access Control</li>
-                            <li><i class="fas fa-check-circle text-success"></i> Responsive UI with Bootstrap</li>
-                            <li><i class="fas fa-check-circle text-success"></i> RESTful API Endpoints</li>
-                        </ul>
-                    </div>
-                </div>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check-circle text-success"></i> Login / logout, BCrypt passwords, sessions, login history</li>
+                    <li><i class="fas fa-check-circle text-success"></i> Roles: ADMIN, BUSINESS, MANAGER, CUSTOMER</li>
+                    <li><i class="fas fa-check-circle text-success"></i> Customer-level and device-level data isolation</li>
+                    <li><i class="fas fa-check-circle text-success"></i> AI chat with follow-up questions and saved context</li>
+                    <li><i class="fas fa-check-circle text-success"></i> AI providers: Groq, Gemini, NVIDIA with automatic fallback; answering model shown in UI</li>
+                    <li><i class="fas fa-check-circle text-success"></i> Schema-aware SQL generation and parser-based SQL validation</li>
+                </ul>
             </div>
-
             <div class="col-md-6">
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-warning text-dark border-0">
-                        <h5 class="mb-0"><i class="fas fa-hourglass-half"></i> Phase 2: AI Integration (Planned)</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fas fa-arrow-right"></i> AI/LLM Integration (e.g., OpenAI, Claude)</li>
-                            <li><i class="fas fa-arrow-right"></i> Natural Language Processing</li>
-                            <li><i class="fas fa-arrow-right"></i> SQL Query Generation</li>
-                            <li><i class="fas fa-arrow-right"></i> Query Validation & Execution</li>
-                            <li><i class="fas fa-arrow-right"></i> Result Formatting</li>
-                            <li><i class="fas fa-arrow-right"></i> Chat History Tracking</li>
-                            <li><i class="fas fa-arrow-right"></i> Query Analytics</li>
-                            <li><i class="fas fa-arrow-right"></i> Performance Optimization</li>
-                        </ul>
-                    </div>
-                </div>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check-circle text-success"></i> Tables, charts, filters, pagination, explanations</li>
+                    <li><i class="fas fa-check-circle text-success"></i> 11 predefined reports (payments, devices, settlements, customers)</li>
+                    <li><i class="fas fa-check-circle text-success"></i> Chat history and SQL cache for repeated questions</li>
+                    <li><i class="fas fa-check-circle text-success"></i> PDF / Excel export with background jobs for large results</li>
+                    <li><i class="fas fa-check-circle text-success"></i> Export job tracking in <code>app.export_job</code></li>
+                    <li><i class="fas fa-check-circle text-success"></i> Query Analytics page (ADMIN only)</li>
+                </ul>
             </div>
         </div>
 
         <!-- Technology Stack -->
         <div class="row mb-5">
-            <div class="col-md-12">
-                <h2 class="h3 fw-bold mb-3">Technology Stack</h2>
-            </div>
+            <div class="col-md-12"><h2 class="h3 fw-bold mb-3">Technology Stack</h2></div>
+            <div class="col-md-3"><div class="card border-0 shadow-sm text-center h-100"><div class="card-body">
+                <h5 class="card-title"><i class="fab fa-java text-danger"></i> Backend</h5>
+                <ul class="list-unstyled small mb-0"><li><strong>Java 17</strong></li><li>Spring Boot 3.2</li><li>Spring Security, Spring JDBC</li><li>Maven</li><li>JSqlParser</li></ul>
+            </div></div></div>
+            <div class="col-md-3"><div class="card border-0 shadow-sm text-center h-100"><div class="card-body">
+                <h5 class="card-title"><i class="fas fa-database text-info"></i> Database</h5>
+                <ul class="list-unstyled small mb-0"><li><strong>Neon PostgreSQL</strong></li><li>6 schemas</li><li>Read-only role datatalk_ro</li><li>HikariCP pool</li></ul>
+            </div></div></div>
+            <div class="col-md-3"><div class="card border-0 shadow-sm text-center h-100"><div class="card-body">
+                <h5 class="card-title"><i class="fas fa-brain text-primary"></i> AI</h5>
+                <ul class="list-unstyled small mb-0"><li><strong>Groq</strong> (default, gpt-oss-20b)</li><li>Google Gemini</li><li>NVIDIA (OpenAI-compatible)</li><li>Configurable fallback chain</li></ul>
+            </div></div></div>
+            <div class="col-md-3"><div class="card border-0 shadow-sm text-center h-100"><div class="card-body">
+                <h5 class="card-title"><i class="fab fa-html5 text-warning"></i> Frontend</h5>
+                <ul class="list-unstyled small mb-0"><li><strong>Thymeleaf</strong></li><li>Bootstrap 5</li><li>Vanilla JavaScript</li><li>Chart.js</li><li>PDF / Excel export</li></ul>
+            </div></div></div>
         </div>
 
-        <div class="row mb-5">
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm text-center">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fab fa-java text-danger"></i> Backend</h5>
-                        <ul class="list-unstyled small">
-                            <li><strong>Java 17</strong></li>
-                            <li>Spring Boot 3.x</li>
-                            <li>Spring Security</li>
-                            <li>Spring JDBC</li>
-                            <li>Maven</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm text-center">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-database text-info"></i> Database</h5>
-                        <ul class="list-unstyled small">
-                            <li><strong>PostgreSQL</strong></li>
-                            <li>Neon Cloud</li>
-                            <li>6 Schemas</li>
-                            <li>20+ Tables</li>
-                            <li>Proper Indexing</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm text-center">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fab fa-html5 text-warning"></i> Frontend</h5>
-                        <ul class="list-unstyled small">
-                            <li><strong>HTML5 / CSS3</strong></li>
-                            <li>Bootstrap 5</li>
-                            <li>JavaScript</li>
-                            <li>Thymeleaf</li>
-                            <li>RESTful APIs</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm text-center">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-shield-alt text-success"></i> Security</h5>
-                        <ul class="list-unstyled small">
-                            <li><strong>BCrypt</strong> Hashing</li>
-                            <li>CSRF Protection</li>
-                            <li>Role-Based Access</li>
-                            <li>HTTPS Ready</li>
-                            <li>Input Validation</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Database Design -->
+        <!-- Database Schemas -->
         <div class="row mb-5">
             <div class="col-md-12">
                 <h2 class="h3 fw-bold mb-3">Database Schemas</h2>
                 <div class="table-responsive">
                     <table class="table table-hover border">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Schema</th>
-                                <th>Purpose</th>
-                                <th>Key Tables</th>
-                            </tr>
-                        </thead>
+                        <thead class="table-primary"><tr><th>Schema</th><th>Purpose</th><th>Main tables</th></tr></thead>
                         <tbody>
-                            <tr>
-                                <td><strong>corp</strong></td>
-                                <td>Corporate and customer data</td>
-                                <td>customer</td>
-                            </tr>
-                            <tr>
-                                <td><strong>location</strong></td>
-                                <td>Location and branch info</td>
-                                <td>location</td>
-                            </tr>
-                            <tr>
-                                <td><strong>app_user</strong></td>
-                                <td>User management and auth</td>
-                                <td>app_user, user_login_history, user_device_access</td>
-                            </tr>
-                            <tr>
-                                <td><strong>device</strong></td>
-                                <td>Device management</td>
-                                <td>device, device_status_log</td>
-                            </tr>
-                            <tr>
-                                <td><strong>txn</strong></td>
-                                <td>Transaction data</td>
-                                <td>payment_transaction, settlement</td>
-                            </tr>
-                            <tr>
-                                <td><strong>app</strong></td>
-                                <td>Application data</td>
-                                <td>chat_history</td>
-                            </tr>
+                            <tr><td><strong>corp</strong></td><td>Customers (merchants)</td><td>customer</td></tr>
+                            <tr><td><strong>location</strong></td><td>Customer locations</td><td>location</td></tr>
+                            <tr><td><strong>app_user</strong></td><td>Users, login history, device access</td><td>app_user, user_login_history, user_device_access</td></tr>
+                            <tr><td><strong>device</strong></td><td>Payment devices and events</td><td>device, device_status_log</td></tr>
+                            <tr><td><strong>txn</strong></td><td>Payments and settlements</td><td>payment_transaction, settlement</td></tr>
+                            <tr><td><strong>app</strong></td><td>Application data (not queryable by AI)</td><td>chat_history, user_ai_context, export_job</td></tr>
                         </tbody>
                     </table>
                 </div>
+                <p class="small text-muted">Sample data: 5 customers, 15 locations, 60 devices, 6 demo users, ~10,000 transactions over 120 days, device events, login history and settlements (synthetic).</p>
             </div>
         </div>
 
-        <!-- Sample Data -->
+        <!-- Development Phases & Status -->
+        <div class="row mb-5">
+            <div class="col-md-12"><h2 class="h3 fw-bold mb-3">Development Phases &amp; Status</h2></div>
+            <div class="col-md-4">
+                <h5 class="text-success"><i class="fas fa-check-circle"></i> Completed</h5>
+                <ul class="small">
+                    <li><strong>Phase 1:</strong> database, sample data, login, roles, dashboard</li>
+                    <li><strong>Phase 2:</strong> AI natural-language reporting, validation, scoping, charts, history, predefined reports, export</li>
+                    <li><strong>Phase 3:</strong> export job persistence, Query Analytics, cleanup, documentation, company requirements proposal</li>
+                    <li>Tests: 32 passing (validator, AI fallback, login/access)</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-warning"><i class="fas fa-adjust"></i> Partially completed / pending</h5>
+                <ul class="small">
+                    <li>Run <code>database/phase3-migration.sql</code> on Neon (export job table)</li>
+                    <li>Analytics timings are approximate (from total answer duration)</li>
+                    <li>Performance optimization limited to caching, timeouts and row limits</li>
+                    <li>AI accuracy checked manually only (no evaluation dataset)</li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-secondary"><i class="fas fa-times-circle"></i> Not implemented / future</h5>
+                <ul class="small">
+                    <li>User management and password reset screens</li>
+                    <li>Scheduled and saved reports</li>
+                    <li>Comprehensive integration, E2E, load and security tests</li>
+                    <li>Production deployment, CI/CD, monitoring</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="row mb-5">
             <div class="col-md-12">
-                <h2 class="h3 fw-bold mb-3">Sample Data</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <h5>Data Loaded</h5>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-building"></i> 5 Customers</li>
-                                    <li><i class="fas fa-map-marker-alt"></i> 15 Locations</li>
-                                    <li><i class="fas fa-mobile-alt"></i> 60 Devices</li>
-                                    <li><i class="fas fa-user"></i> 6 Demo Users</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <h5>Transactions & Events</h5>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-credit-card"></i> 10,000 Transactions</li>
-                                    <li><i class="fas fa-exchange-alt"></i> 1,500 Status Events</li>
-                                    <li><i class="fas fa-history"></i> 800 Login Records</li>
-                                    <li><i class="fas fa-calendar-alt"></i> 120-day Period</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="alert alert-info border-0 mb-0">
+                    <i class="fas fa-user-lock"></i> Demo users: <code>admin_user</code>, <code>techpay_manager</code>, <code>retail_manager</code>,
+                    <code>techpay_customer</code>, <code>restaurant_owner</code>, <code>gas_operator</code>.
+                    Demo passwords are documented in <code>docs/DEMO_USERS_GUIDE.md</code> (not shown here).
                 </div>
             </div>
         </div>
 
-        <!-- Development Status -->
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <h2 class="h3 fw-bold mb-3">Development Status</h2>
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5 class="text-success"><i class="fas fa-check-circle"></i> Completed (Phase 1)</h5>
-                        <ul class="small">
-                            <li>Database schema design and creation</li>
-                            <li>PostgreSQL Neon setup</li>
-                            <li>Sample data generation (10,000+ records)</li>
-                            <li>Spring Boot project setup</li>
-                            <li>User authentication system</li>
-                            <li>Login/logout functionality</li>
-                            <li>Dashboard with data summary</li>
-                            <li>RESTful APIs</li>
-                            <li>Session management</li>
-                            <li>Role-based access control</li>
-                            <li>Bootstrap UI</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h5 class="text-warning"><i class="fas fa-hourglass-half"></i> Pending (Phase 2+)</h5>
-                        <ul class="small">
-                            <li>AI/LLM integration</li>
-                            <li>Natural language processing</li>
-                            <li>SQL query generation</li>
-                            <li>Query execution and validation</li>
-                            <li>Advanced analytics</li>
-                            <li>Report generation</li>
-                            <li>Data export functionality</li>
-                            <li>Performance optimization</li>
-                            <li>Advanced security features</li>
-                            <li>Multi-language support</li>
-                            <li>Mobile app version</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Demo Credentials -->
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <div class="alert alert-success border-0">
-                    <h5 class="alert-heading"><i class="fas fa-user-lock"></i> Demo Login Credentials</h5>
-                    <p class="mb-2"><strong>All demo users use password:</strong> <code>DemoPass@123</code></p>
-                    <table class="table table-sm table-borderless mb-0">
-                        <tr><td><strong>admin_user</strong></td><td>System Administrator</td></tr>
-                        <tr><td><strong>techpay_manager</strong></td><td>Business Manager (TechPay Solutions)</td></tr>
-                        <tr><td><strong>retail_manager</strong></td><td>Manager (RetailHub Inc)</td></tr>
-                        <tr><td><strong>restaurant_owner</strong></td><td>Business Owner (Restaurant Group)</td></tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- How It Works -->
-        <div class="row mb-5">
-            <div class="col-md-12">
-                <h2 class="h3 fw-bold mb-3">How It Will Work (Phase 2)</h2>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <div class="card border-0 shadow-sm text-center">
-                            <div class="card-body">
-                                <h3 class="display-6 text-primary">1</h3>
-                                <h5>Ask Question</h5>
-                                <p class="small text-muted">User asks in natural language (e.g., "How many transactions today?")</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="card border-0 shadow-sm text-center">
-                            <div class="card-body">
-                                <h3 class="display-6 text-info">2</h3>
-                                <h5>AI Processing</h5>
-                                <p class="small text-muted">AI understands context and generates SQL</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="card border-0 shadow-sm text-center">
-                            <div class="card-body">
-                                <h3 class="display-6 text-warning">3</h3>
-                                <h5>Execute Query</h5>
-                                <p class="small text-muted">Safe SQL execution with validation</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="card border-0 shadow-sm text-center">
-                            <div class="card-body">
-                                <h3 class="display-6 text-success">4</h3>
-                                <h5>Show Results</h5>
-                                <p class="small text-muted">Results displayed in charts and tables</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Info -->
         <div class="row">
             <div class="col-md-12">
                 <div class="alert alert-light border text-center">
-                    <p class="mb-2"><strong>DataTalk AI - POC Phase 1</strong></p>
-                    <p class="small text-muted mb-0">Last Updated: November 2026 | Version: 0.1.0</p>
+                    <p class="mb-2"><strong>DataTalk AI &ndash; Personal POC</strong></p>
+                    <p class="small text-muted mb-0">Last Updated: November 4, 2026 | Version: 0.3.0</p>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

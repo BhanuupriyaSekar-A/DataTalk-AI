@@ -4,8 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * Spring Security Configuration
@@ -22,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/api/login", "/static/**").permitAll()
                         .requestMatchers("/health", "/info", "/poc-info").permitAll()
+                        .requestMatchers("/analytics", "/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 // Login form
@@ -44,6 +48,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/api/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                )
+                // APIs return 401 JSON-friendly status instead of redirecting to the login page
+                .exceptionHandling(ex -> ex
+                        .defaultAuthenticationEntryPointFor(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                new AntPathRequestMatcher("/api/**"))
                 )
                 // Session Configuration
                 .sessionManagement(session -> session

@@ -46,6 +46,20 @@ public class PageController {
     }
 
     /**
+     * Query Analytics page (ADMIN only; also enforced by SecurityConfig and the analytics API)
+     */
+    @GetMapping("/analytics")
+    public String analytics(HttpSession session) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(session.getAttribute("role"))) {
+            return "redirect:/dashboard";
+        }
+        return "analytics";
+    }
+
+    /**
      * POC Information page
      */
     @GetMapping("/poc-info")
