@@ -72,6 +72,16 @@ mvn test                     # 32 tests; LoginAndAccessIntegrationTest needs the
 ```
 Open **http://localhost:8081/datatalk/login**. The port is set by `server.port` and the context path is `/datatalk`.
 
+### Share a public URL (optional, ngrok)
+While the app runs locally, others can reach it through an ngrok tunnel (one-time setup:
+`ngrok config add-authtoken <token>` from your ngrok dashboard):
+```bash
+ngrok http 8081
+```
+Share `https://<your-ngrok-domain>/datatalk/login`. The URL works only while both the app and ngrok are running.
+`server.forward-headers-strategy=native` keeps redirects on the public https URL. Free ngrok shows a one-time
+"Visit Site" warning page. Anyone with the link can reach the login page, so change the demo passwords before sharing.
+
 ### 4. Demo users
 Six demo users exist, one or more per role: `admin_user` (ADMIN), `techpay_manager` (BUSINESS),
 `retail_manager` (MANAGER), `techpay_customer` (CUSTOMER), `restaurant_owner` (BUSINESS) and `gas_operator` (CUSTOMER).
