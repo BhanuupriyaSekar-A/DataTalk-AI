@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Small smoke test for login, role-based access and the ADMIN-only analytics API.
  * Needs the Neon database (DB_URL / DB_USER / DB_PASSWORD) and the demo users from sample-data.sql.
  */
-@SpringBootTest
+@SpringBootTest(properties = "app.ngrok.enabled=false")
 @AutoConfigureMockMvc
 @DisplayName("Login and access smoke tests")
 class LoginAndAccessIntegrationTest {

@@ -72,15 +72,16 @@ mvn test                     # 32 tests; LoginAndAccessIntegrationTest needs the
 ```
 Open **http://localhost:8081/datatalk/login**. The port is set by `server.port` and the context path is `/datatalk`.
 
-### Share a public URL (optional, ngrok)
-While the app runs locally, others can reach it through an ngrok tunnel (one-time setup:
-`ngrok config add-authtoken <token>` from your ngrok dashboard):
-```bash
-ngrok http 8081
-```
-Share `https://<your-ngrok-domain>/datatalk/login`. The URL works only while both the app and ngrok are running.
-`server.forward-headers-strategy=native` keeps redirects on the public https URL. Free ngrok shows a one-time
-"Visit Site" warning page. Anyone with the link can reach the login page, so change the demo passwords before sharing.
+### Public URL (automatic, ngrok)
+When the app starts it automatically launches an ngrok tunnel (`tunnel/NgrokTunnel.java`) and logs:
+`==> ngrok tunnel started: public URL https://<your-ngrok-domain>/datatalk/login`. Stopping the app stops ngrok.
+One-time setup: install ngrok and run `ngrok config add-authtoken <token>` from your ngrok dashboard.
+Settings (in `.env` or environment): `NGROK_ENABLED` (default `true`; set `false` to turn off), `NGROK_DOMAIN`
+(optional fixed domain), `NGROK_COMMAND` (path to ngrok). The ngrok output goes to `logs/ngrok.log`.
+If ngrok is missing or fails, the app still runs locally and only logs a warning.
+The URL works only while the app is running. `server.forward-headers-strategy=native` keeps redirects on the public
+https URL. Free ngrok shows a one-time "Visit Site" warning page. Anyone with the link can reach the login page, so
+change the demo passwords before sharing.
 
 ### 4. Demo users
 Six demo users exist, one or more per role: `admin_user` (ADMIN), `techpay_manager` (BUSINESS),
