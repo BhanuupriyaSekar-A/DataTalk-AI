@@ -25,14 +25,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/api/login", "/static/**").permitAll()
                         .requestMatchers("/health", "/info", "/poc-info").permitAll()
-                        .requestMatchers("/analytics", "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/analytics", "/customers", "/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 // Login form
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .defaultSuccessUrl("/chat", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )

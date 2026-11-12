@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -44,6 +45,36 @@ public class CustomerRepository {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Customers whose name or email contains the term, or with the term's id (ADMIN customer list and search)
+     */
+    public List<Customer> search(SearchTerm term, int limit) {
+        return jdbcTemplate.query(
+                "SELECT customer_id, customer_name, email, phone, status, created_date FROM corp.customer"
+                        + " WHERE customer_name ILIKE ? OR email ILIKE ? OR customer_id = ?"
+                        + " ORDER BY (customer_id = ?) DESC, customer_name LIMIT ?",
+                customerRowMapper, term.like(), term.like(), term.id(), term.id(), limit);
+    }
+
+    /**
+     * Insert a customer and return its new id
+     */
+    public int insert(Customer customer) {
+        return jdbcTemplate.queryForObject(
+                "INSERT INTO corp.customer (customer_name, email, phone, status) VALUES (?, ?, ?, ?) RETURNING customer_id",
+                Integer.class, customer.getCustomerName(), customer.getEmail(), customer.getPhone(), customer.getStatus());
+    }
+
+    /**
+     * Update name, email, phone and status of a customer
+     */
+    public void update(Customer customer) {
+        jdbcTemplate.update("UPDATE corp.customer SET customer_name = ?, email = ?, phone = ?, status = ?,"
+                        + " updated_date = CURRENT_TIMESTAMP WHERE customer_id = ?",
+                customer.getCustomerName(), customer.getEmail(), customer.getPhone(), customer.getStatus(),
+                customer.getCustomerId());
     }
 
     /**

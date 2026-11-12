@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Maps reporting/AI exceptions to consistent ApiResponse errors. Messages never contain secrets.
  */
 @Slf4j
-@RestControllerAdvice(assignableTypes = {ChatApiController.class, ReportApiController.class, ExportApiController.class})
+@RestControllerAdvice(assignableTypes = {ChatApiController.class, ReportApiController.class, ExportApiController.class,
+        SearchApiController.class, CustomerAdminApiController.class, RecordApiController.class})
 public class ApiExceptionHandler {
 
     @ExceptionHandler(ReportAccessException.class)

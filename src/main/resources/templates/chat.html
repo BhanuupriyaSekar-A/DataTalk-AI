@@ -16,55 +16,47 @@
         .chart-box { position: relative; height: 280px; }
         .report-list .list-group-item { cursor: pointer; font-size: .85rem; }
         .history-item { cursor: pointer; font-size: .8rem; }
+        .section-toggle { cursor: pointer; user-select: none; }
+        .section-toggle .toggle-icon { transition: transform .2s; }
+        .section-toggle.collapsed .toggle-icon { transform: rotate(-90deg); }
+        @media (min-width: 992px) {
+            .chat-sidebar { position: sticky; top: 1rem; align-self: flex-start; max-height: calc(100vh - 90px); overflow-y: auto; }
+        }
         pre.sql { white-space: pre-wrap; font-size: .78rem; background: #212529; color: #e9ecef; padding: .75rem; border-radius: 6px; }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/datatalk/dashboard"><i class="fas fa-brain"></i> DataTalk AI <small class="fw-light opacity-75" style="font-size:.7rem">Built by Vijay</small></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/datatalk/dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/datatalk/chat">AI Chat</a></li>
-                    <li class="nav-item d-none" id="analyticsNav"><a class="nav-link" href="/datatalk/analytics">Analytics</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/datatalk/poc-info">Project Info</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> <span id="userDisplay">User</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><span class="dropdown-item-text small text-muted" id="userRole"></span></li>
-                            <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <nav th:replace="~{fragments/navbar :: navbar('chat')}"></nav>
 
     <div class="container-fluid py-3">
         <div class="row g-3">
             <!-- Sidebar: predefined reports + history -->
-            <div class="col-lg-3 order-2 order-lg-1">
+            <div class="col-lg-3 order-2 order-lg-1 chat-sidebar">
                 <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-header bg-secondary text-white border-0">
+                    <div class="card-header bg-secondary text-white border-0 d-flex justify-content-between align-items-center section-toggle"
+                         role="button" data-bs-toggle="collapse" data-bs-target="#reportCollapse" aria-expanded="true" aria-controls="reportCollapse">
                         <h6 class="mb-0"><i class="fas fa-file-lines"></i> Predefined Reports</h6>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
                     </div>
-                    <div class="card-body p-0 report-list" id="reportList">
-                        <div class="p-3 small text-muted">Loading reports...</div>
+                    <div class="collapse show" id="reportCollapse">
+                        <div class="card-body p-0 report-list" id="reportList">
+                            <div class="p-3 small text-muted">Loading reports...</div>
+                        </div>
                     </div>
                 </div>
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-secondary text-white border-0 d-flex justify-content-between align-items-center">
+                    <div class="card-header bg-secondary text-white border-0 d-flex justify-content-between align-items-center section-toggle collapsed"
+                         role="button" data-bs-toggle="collapse" data-bs-target="#historyCollapse" aria-expanded="false" aria-controls="historyCollapse">
                         <h6 class="mb-0"><i class="fas fa-clock-rotate-left"></i> Recent Questions</h6>
-                        <button class="btn btn-sm btn-outline-light py-0" onclick="loadHistory()" title="Refresh"><i class="fas fa-rotate"></i></button>
+                        <span>
+                            <button class="btn btn-sm btn-outline-light py-0" onclick="event.stopPropagation(); loadHistory()" title="Refresh"><i class="fas fa-rotate"></i></button>
+                            <i class="fas fa-chevron-down toggle-icon ms-2"></i>
+                        </span>
                     </div>
-                    <div class="list-group list-group-flush" id="historyList">
-                        <div class="p-3 small text-muted">Loading...</div>
+                    <div class="collapse" id="historyCollapse">
+                        <div class="list-group list-group-flush" id="historyList">
+                            <div class="p-3 small text-muted">Loading...</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -130,6 +122,9 @@
                         <form id="askForm" class="input-group" autocomplete="off">
                             <textarea class="form-control" id="questionInput" rows="1" maxlength="1000"
                                       placeholder="Ask about payments, devices, locations or settlements..." required></textarea>
+                            <button class="btn btn-outline-secondary" type="button" id="micBtn" title="Voice input" aria-label="Voice input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
                             <button class="btn btn-primary" type="submit" id="sendBtn">
                                 <i class="fas fa-paper-plane"></i> Send
                             </button>

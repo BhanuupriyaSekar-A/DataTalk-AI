@@ -346,6 +346,7 @@ async function clearConversation() {
 
 function setBusy(busy) {
     document.getElementById('sendBtn').disabled = busy;
+    document.getElementById('micBtn').disabled = busy;
     document.getElementById('questionInput').disabled = busy;
     document.getElementById('loadingText').textContent = busy ? 'Working on your report...' : '';
 }
@@ -401,6 +402,67 @@ function updateCount() {
     document.getElementById('charCount').textContent = document.getElementById('questionInput').value.length;
 }
 
+// ---------- voice input (browser Web Speech API) ----------
+let recognition = null;
+let listening = false;
+const LISTENING_MSG = 'Listening... speak now, click the stop button when done.';
+const VOICE_ERRORS = {
+    'not-allowed': 'Microphone permission denied. Allow microphone access in your browser settings.',
+    'service-not-allowed': 'Microphone permission denied. Allow microphone access in your browser settings.',
+    'audio-capture': 'No microphone found.',
+    'no-speech': 'No speech detected. Please try again.',
+    'network': 'Voice recognition needs an internet connection.',
+    'aborted': ''
+};
+
+function setMicState(on) {
+    listening = on;
+    const btn = document.getElementById('micBtn');
+    btn.classList.toggle('btn-danger', on);
+    btn.classList.toggle('btn-outline-secondary', !on);
+    btn.innerHTML = on ? '<i class="fas fa-stop fa-beat"></i>' : '<i class="fas fa-microphone"></i>';
+    btn.title = on ? 'Stop listening' : 'Voice input';
+}
+
+function initVoice() {
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('loadingText');
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        btn.title = 'Voice input is not supported in this browser';
+        btn.addEventListener('click', () => status.textContent = 'Voice input is not supported in this browser. Try Chrome or Edge.');
+        return;
+    }
+    const input = document.getElementById('questionInput');
+    let base = '', error = '';
+    recognition = new SR();
+    recognition.lang = navigator.language || 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+    recognition.onstart = () => {
+        error = '';
+        base = input.value.trim();
+        setMicState(true);
+        status.textContent = LISTENING_MSG;
+    };
+    recognition.onresult = ev => {
+        const text = Array.from(ev.results).map(r => r[0].transcript).join('').trim();
+        input.value = ((base ? base + ' ' : '') + text).substring(0, input.maxLength);
+        updateCount();
+    };
+    recognition.onerror = ev => error = ev.error in VOICE_ERRORS ? VOICE_ERRORS[ev.error] : 'Voice input error: ' + ev.error;
+    recognition.onend = () => {
+        setMicState(false);
+        if (error) status.textContent = error;
+        else if (status.textContent === LISTENING_MSG) status.textContent = '';
+        if (!input.disabled) input.focus();
+    };
+    btn.addEventListener('click', () => {
+        if (listening) recognition.stop();
+        else recognition.start();
+    });
+}
+
 async function logout() {
     if (confirm('Are you sure you want to logout?')) {
         try { await fetch(API + '/logout', {method: 'POST'}); } finally { window.location.href = '/datatalk/login?logout=true'; }
@@ -423,6 +485,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         ev.preventDefault();
         const q = input.value.trim();
         if (!q) return;
+        if (listening) recognition.abort();
         input.value = '';
         updateCount();
         ask(q);
@@ -438,6 +501,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         ev.preventDefault();
         ask(a.textContent);
     }));
+    // Opened from Global Search: run that predefined report (no AI call)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('report')) {
+        history.replaceState(null, '', window.location.pathname);
+        runReport(params.get('report'), params.get('name') || params.get('report'));
+    }
+    initVoice();
     loadAiInfo();
     loadReports();
     loadHistory();

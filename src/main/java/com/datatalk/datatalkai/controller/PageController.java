@@ -1,6 +1,7 @@
 package com.datatalk.datatalkai.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import jakarta.servlet.http.HttpSession;
@@ -57,6 +58,44 @@ public class PageController {
             return "redirect:/dashboard";
         }
         return "analytics";
+    }
+
+    /**
+     * Customer management page (ADMIN only; also enforced by SecurityConfig and the customer API)
+     */
+    @GetMapping("/customers")
+    public String customers(HttpSession session, Model model) {
+        if (session.getAttribute("userId") == null) {
+            return "redirect:/login";
+        }
+        if (!"ADMIN".equals(session.getAttribute("role"))) {
+            return "redirect:/dashboard";
+        }
+        return recordPage(model, "customers", "Customers");
+    }
+
+    /**
+     * Devices, locations and transactions pages (data access is enforced by their APIs)
+     */
+    @GetMapping("/devices")
+    public String devices(HttpSession session, Model model) {
+        return session.getAttribute("userId") == null ? "redirect:/login" : recordPage(model, "devices", "Devices");
+    }
+
+    @GetMapping("/locations")
+    public String locations(HttpSession session, Model model) {
+        return session.getAttribute("userId") == null ? "redirect:/login" : recordPage(model, "locations", "Locations");
+    }
+
+    @GetMapping("/transactions")
+    public String transactions(HttpSession session, Model model) {
+        return session.getAttribute("userId") == null ? "redirect:/login" : recordPage(model, "transactions", "Transactions");
+    }
+
+    private static String recordPage(Model model, String page, String title) {
+        model.addAttribute("page", page);
+        model.addAttribute("title", title);
+        return "records";
     }
 
     /**

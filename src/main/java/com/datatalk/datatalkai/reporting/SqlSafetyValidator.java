@@ -77,7 +77,10 @@ public class SqlSafetyValidator {
     private static final Map<String, String> DATE_FILTER_COLUMNS = Map.of(
             "txn.payment_transaction", "transaction_time",
             "txn.settlement", "settlement_date",
-            "device.device_status_log", "event_time");
+            "device.device_status_log", "event_time",
+            "device.device_health_metric", "recorded_time",
+            "txn.transaction_fee", "fee_time",
+            "txn.refund", "requested_time");
     private static final Map<String, String> STATUS_FILTER_COLUMNS = Map.of(
             "txn.payment_transaction", "transaction_status");
 

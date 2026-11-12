@@ -117,7 +117,7 @@
                 if (data.success) {
                     showAlert('Login successful! Redirecting...', 'success');
                     setTimeout(() => {
-                        window.location.href = '/datatalk/dashboard';
+                        window.location.href = '/datatalk/chat';
                     }, 1000);
                 } else {
                     showAlert(data.message || data.error || 'Login failed', 'danger');

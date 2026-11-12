@@ -20,7 +20,8 @@ public class SchemaMetadataService {
 
     /** Low-cardinality, non-sensitive columns whose distinct values help the AI write correct filters. */
     private static final Set<String> CATEGORICAL_COLUMNS = Set.of(
-            "status", "transaction_status", "card_type", "entry_mode", "device_type", "event_type");
+            "status", "transaction_status", "card_type", "entry_mode", "device_type", "event_type",
+            "health_status", "fee_type", "refund_reason", "refund_status");
 
     private static final String METADATA_SQL = """
             SELECT c.table_schema, c.table_name, c.column_name, c.data_type,

@@ -127,6 +127,120 @@ a:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Global search (injected before Dashboard by navbar.js) */
+.global-search {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+}
+
+.global-search-box {
+    position: relative;
+    width: 300px;
+}
+
+.global-search-box .form-control {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.gs-icon {
+    position: absolute;
+    left: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 0.8rem;
+    pointer-events: none;
+}
+
+.gs-clear {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: none;
+    color: #6c757d;
+    padding: 0 0.3rem;
+}
+
+.gs-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 420px;
+    max-width: 90vw;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1080;
+}
+
+.gs-group {
+    padding: 0.4rem 0.75rem 0.15rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6c757d;
+}
+
+.gs-item {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    color: #212529;
+    font-size: 0.875rem;
+}
+
+.gs-item i {
+    width: 1rem;
+    margin-top: 0.2rem;
+    color: #0d6efd;
+}
+
+.gs-item.active,
+.gs-item:hover {
+    background: #e9f2ff;
+}
+
+.gs-sub,
+.gs-state {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.gs-state {
+    padding: 0.5rem 0.75rem;
+}
+
+@media (min-width: 992px) and (max-width: 1399.98px) {
+    .global-search-box {
+        width: 200px;
+    }
+
+    .navbar-nav .nav-link {
+        margin: 0 0.15rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .global-search {
+        margin: 0.5rem 0;
+    }
+
+    .global-search-box,
+    .gs-results {
+        width: 100%;
+        max-width: none;
+    }
+}
+
 /* =====================================================================
    Card Styles
    ===================================================================== */
