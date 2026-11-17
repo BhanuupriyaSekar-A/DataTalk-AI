@@ -47,12 +47,12 @@ INSERT INTO location.location (customer_id, location_name, city, state, timezone
 -- For production, use strong passwords and rotate regularly
 -- =====================================================================
 INSERT INTO app_user.app_user (username, password_hash, full_name, email, role, customer_id, status, created_date) VALUES
-('admin_user', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Admin System', 'admin@datatalk.com', 'ADMIN', NULL, 'ACTIVE', NOW() - INTERVAL '120 days'),
-('techpay_manager', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'John Manager', 'john.manager@techpay.com', 'BUSINESS', 1, 'ACTIVE', NOW() - INTERVAL '115 days'),
-('techpay_customer', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Sarah Customer', 'sarah@techpay.com', 'CUSTOMER', 1, 'ACTIVE', NOW() - INTERVAL '110 days'),
-('retail_manager', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Mike Retail', 'mike@retailhub.com', 'MANAGER', 2, 'ACTIVE', NOW() - INTERVAL '85 days'),
-('restaurant_owner', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'David Chef', 'david@restgrp.com', 'BUSINESS', 3, 'ACTIVE', NOW() - INTERVAL '55 days'),
-('gas_operator', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Emma Operator', 'emma@gasnet.com', 'CUSTOMER', 4, 'ACTIVE', NOW() - INTERVAL '42 days');
+('admin_user', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Bhanupriya', 'bhanupriya@datatalk.com', 'ADMIN', NULL, 'ACTIVE', NOW() - INTERVAL '120 days'),
+('techpay_manager', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Arjun Mehta', 'arjun.mehta@techpay.com', 'BUSINESS', 1, 'ACTIVE', NOW() - INTERVAL '115 days'),
+('techpay_customer', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Priya Raman', 'priya.raman@techpay.com', 'CUSTOMER', 1, 'ACTIVE', NOW() - INTERVAL '110 days'),
+('retail_manager', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Michael Carter', 'michael.carter@retailhub.com', 'MANAGER', 2, 'ACTIVE', NOW() - INTERVAL '85 days'),
+('restaurant_owner', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Daniel Brooks', 'daniel.brooks@restgrp.com', 'BUSINESS', 3, 'ACTIVE', NOW() - INTERVAL '55 days'),
+('gas_operator', '$2a$10$muZDonRTJymtmicJtZ2FZ.MJ7zWFbR9VoQP.uQkAMPaQzInXqyVNa', 'Emily Watson', 'emily.watson@gasnet.com', 'CUSTOMER', 4, 'ACTIVE', NOW() - INTERVAL '42 days');
 
 -- =====================================================================
 -- SAMPLE DATA - DEVICE.DEVICE (60 devices)

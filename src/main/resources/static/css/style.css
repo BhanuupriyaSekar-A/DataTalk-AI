@@ -1,9 +1,20 @@
 /* =====================================================================
-   DataTalk AI - Main Stylesheet
+   SL Talk AI - Main Stylesheet
    ===================================================================== */
 
 :root {
-    --primary-color: #0d6efd;
+    /* DMS / SeedLive-inspired blue palette. Change these to restyle the whole app. */
+    --dt-blue: #0b4f9c;
+    --dt-blue-dark: #083a75;
+    --dt-blue-darker: #062a55;
+    --dt-blue-light: #e6f0fb;
+    --dt-blue-mid: #4d8fd6;
+    --dt-workspace: #f3f5f8;
+    --dt-border: #dfe4ec;
+    --dt-text: #1f2a37;
+    --dt-muted: #5f6b7a;
+
+    --primary-color: var(--dt-blue);
     --secondary-color: #6c757d;
     --success-color: #198754;
     --danger-color: #dc3545;
@@ -11,6 +22,40 @@
     --info-color: #0dcaf0;
     --light-color: #f8f9fa;
     --dark-color: #212529;
+    --brand-orange: #f97316;
+    --brand-orange-dark: #ea580c;
+    --brand-navy: var(--dt-blue-darker);
+    --brand-navy-2: var(--dt-blue);
+
+    /* Bootstrap colour hooks so links, focus rings and .text-primary follow the palette */
+    --bs-primary: #0b4f9c;
+    --bs-primary-rgb: 11, 79, 156;
+    --bs-link-color: #0b4f9c;
+    --bs-link-color-rgb: 11, 79, 156;
+    --bs-link-hover-color: #083a75;
+    --bs-link-hover-color-rgb: 8, 58, 117;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--dt-blue);
+    --bs-btn-border-color: var(--dt-blue);
+    --bs-btn-hover-bg: var(--dt-blue-dark);
+    --bs-btn-hover-border-color: var(--dt-blue-dark);
+    --bs-btn-active-bg: var(--dt-blue-darker);
+    --bs-btn-active-border-color: var(--dt-blue-darker);
+    --bs-btn-disabled-bg: var(--dt-blue);
+    --bs-btn-disabled-border-color: var(--dt-blue);
+    --bs-btn-focus-shadow-rgb: 11, 79, 156;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--dt-blue);
+    --bs-btn-border-color: var(--dt-blue);
+    --bs-btn-hover-bg: var(--dt-blue);
+    --bs-btn-hover-border-color: var(--dt-blue);
+    --bs-btn-active-bg: var(--dt-blue-dark);
+    --bs-btn-active-border-color: var(--dt-blue-dark);
+    --bs-btn-focus-shadow-rgb: 11, 79, 156;
 }
 
 /* =====================================================================
@@ -19,8 +64,8 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    color: #333;
-    background-color: #f8f9fa;
+    color: var(--dt-text);
+    background-color: var(--dt-workspace);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -35,64 +80,320 @@ a {
 }
 
 a:hover {
-    color: #0b5ed7;
+    color: var(--dt-blue-dark);
     text-decoration: underline;
 }
 
 /* =====================================================================
-   Login Page Styles
+   Login Page: light workspace, blue accents only
    ===================================================================== */
 
-.login-body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.auth-page {
     min-height: 100vh;
+    background: #f6f8fb;
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
 }
 
-.login-card {
-    border: none;
-    border-radius: 10px;
-    background-color: white;
+.auth-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-.login-card .card-body {
-    padding: 2rem;
+.auth-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(11, 79, 156, 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 25%, transparent 75%);
+    mask-image: radial-gradient(ellipse at center, #000 25%, transparent 75%);
 }
 
-.login-card .form-label {
-    font-weight: 500;
-    color: #495057;
-    margin-bottom: 0.5rem;
+.auth-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.6;
+    animation: auth-float 18s ease-in-out infinite alternate;
 }
 
-.login-card .form-control {
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.auth-blob.b1 {
+    width: 440px;
+    height: 440px;
+    background: #cfe1f8;
+    top: -140px;
+    left: -110px;
 }
 
-.login-card .form-control:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+.auth-blob.b2 {
+    width: 380px;
+    height: 380px;
+    background: #dceafb;
+    bottom: -140px;
+    right: -90px;
+    animation-duration: 22s;
 }
 
-.login-card .btn-primary {
-    background-color: var(--primary-color);
-    border: none;
-    padding: 0.75rem;
+.auth-blob.b3 {
+    width: 220px;
+    height: 220px;
+    background: #e3eefb;
+    top: 38%;
+    right: 16%;
+    opacity: 0.45;
+    animation-duration: 26s;
+}
+
+@keyframes auth-float {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(32px, 26px) scale(1.06); }
+}
+
+@keyframes auth-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+}
+
+.auth-shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 430px;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    border: 1px solid #e6ebf2;
+    border-top: 3px solid var(--dt-blue);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 18px 48px rgba(16, 24, 40, 0.08);
+    padding: 2.25rem 2rem 1.75rem;
+    animation: auth-in 0.5s ease-out both;
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.4rem;
+}
+
+.auth-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(11, 79, 156, 0.18);
+}
+
+.auth-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--dt-text);
+    letter-spacing: -0.4px;
+}
+
+.auth-title {
+    font-size: 1.55rem;
     font-weight: 600;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
+    text-align: center;
+    color: var(--dt-text);
+    margin-bottom: 0.35rem;
 }
 
-.login-card .btn-primary:hover {
-    background-color: #0b5ed7;
+.auth-sub {
+    text-align: center;
+    color: var(--dt-muted);
+    font-size: 0.92rem;
+    margin-bottom: 1.5rem;
 }
 
-.login-card .alert {
-    border-radius: 6px;
-    border: none;
+.auth-field {
+    margin-bottom: 1rem;
+}
+
+.auth-field .form-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #344054;
+    margin-bottom: 0.35rem;
+}
+
+.auth-input {
+    position: relative;
+}
+
+.auth-input > .lead-icon {
+    position: absolute;
+    left: 0.95rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #98a2b3;
+    font-size: 0.9rem;
+    pointer-events: none;
+    transition: color 0.15s ease;
+}
+
+.auth-input:focus-within > .lead-icon {
+    color: var(--dt-blue);
+}
+
+.auth-input .form-control {
+    height: 46px;
+    padding-left: 2.6rem;
+    border-radius: 12px;
+    border: 1px solid #d0d5dd;
+    background: #fff;
+    font-size: 0.95rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-input .form-control:focus {
+    border-color: var(--dt-blue-mid);
+    box-shadow: 0 0 0 4px rgba(11, 79, 156, 0.12);
+}
+
+.auth-input.has-toggle .form-control {
+    padding-right: 2.9rem;
+}
+
+.pw-toggle {
+    position: absolute;
+    right: 0.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: #98a2b3;
+}
+
+.pw-toggle:hover,
+.pw-toggle:focus-visible {
+    color: var(--dt-blue);
+    background: var(--dt-blue-light);
+}
+
+.auth-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
+}
+
+.auth-options .form-check-input:checked {
+    background-color: var(--dt-blue);
+    border-color: var(--dt-blue);
+}
+
+.auth-submit {
+    height: 46px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    box-shadow: 0 6px 16px rgba(11, 79, 156, 0.22);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(11, 79, 156, 0.28);
+}
+
+.auth-demo {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed #e4e7ec;
+    text-align: center;
+}
+
+.auth-demo-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dt-muted);
+    margin-bottom: 0.6rem;
+}
+
+.auth-demo-users {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.auth-demo-note {
+    font-size: 0.75rem;
+    color: var(--dt-muted);
+    margin-top: 0.6rem;
+}
+
+.auth-features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    margin-top: 1.4rem;
+    font-size: 0.8rem;
+    color: var(--dt-muted);
+}
+
+.auth-features i {
+    color: var(--dt-blue);
+    margin-right: 0.3rem;
+}
+
+.auth-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #98a2b3;
+    margin-top: 0.9rem;
+}
+
+.auth-footer a {
+    color: var(--dt-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-blob,
+    .auth-card {
+        animation: none;
+    }
+
+    .auth-submit:hover:not(:disabled) {
+        transform: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 1.75rem 1.25rem 1.5rem;
+        border-radius: 16px;
+    }
+
+    .auth-blob.b1 {
+        width: 280px;
+        height: 280px;
+    }
+
+    .auth-blob.b3 {
+        display: none;
+    }
 }
 
 /* =====================================================================
@@ -103,6 +404,47 @@ a:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Brand bar: DMS-style blue gradient header (overrides the generic .bg-primary utility). */
+.navbar.bg-primary,
+.navbar.app-header {
+    background: linear-gradient(180deg, var(--dt-blue) 0%, var(--dt-blue-dark) 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.navbar.app-header {
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+.header-btn {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+}
+
+.header-btn:hover,
+.header-btn:focus-visible {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+}
+
+.header-btn.active {
+    color: var(--dt-blue-dark);
+    background: #fff;
+    border-color: #fff;
+}
+
+.app-header .user-chip {
+    color: #fff;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    box-shadow: inset 0 -2px 0 #fff;
+}
+
 .navbar-brand {
     font-size: 1.3rem;
     font-weight: 700;
@@ -111,6 +453,81 @@ a:hover {
 
 .navbar-brand i {
     margin-right: 0.5rem;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.brand-logo {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.brand-text {
+    line-height: 1;
+}
+
+.brand-ai {
+    color: var(--brand-orange);
+    margin-left: 0.2rem;
+}
+
+/* Signed-in user: name and role shown separately */
+.user-chip {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--dt-blue);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.user-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    min-width: 0;
+    max-width: 170px;
+}
+
+.user-name,
+.user-role {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    font-size: 0.72rem;
+    opacity: 0.75;
+}
+
+.user-menu {
+    min-width: 220px;
 }
 
 .navbar-nav .nav-link {
@@ -127,117 +544,728 @@ a:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Global search (injected before Dashboard by navbar.js) */
-.global-search {
+/* =====================================================================
+   Home: central search (is-home) and Google-style results (is-results)
+   ===================================================================== */
+
+.search-app {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+}
+
+.search-app.is-home,
+.search-app.is-report {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10vh;
+}
+
+.search-hero {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.hero-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(11, 79, 156, 0.25);
+}
+
+.hero-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--dt-blue-dark);
+    margin-top: 0.6rem;
+    letter-spacing: -0.3px;
+}
+
+.hero-title {
+    font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+    font-weight: 600;
+    color: var(--dt-text);
+    margin: 0.75rem 0 0.4rem;
+}
+
+.search-box {
+    position: relative;
     display: flex;
     align-items: center;
-    margin-right: 0.5rem;
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(31, 42, 55, 0.08);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
-.global-search-box {
-    position: relative;
-    width: 300px;
+.search-box:focus-within {
+    border-color: var(--dt-blue-mid);
+    box-shadow: 0 4px 16px rgba(11, 79, 156, 0.18);
 }
 
-.global-search-box .form-control {
-    padding-left: 2rem;
-    padding-right: 2rem;
-}
-
-.gs-icon {
+.search-box-icon {
     position: absolute;
-    left: 0.65rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-    font-size: 0.8rem;
+    left: 1.2rem;
+    color: var(--dt-muted);
     pointer-events: none;
 }
 
-.gs-clear {
-    position: absolute;
-    right: 0.35rem;
-    top: 50%;
-    transform: translateY(-50%);
+.search-input {
+    flex: 1 1 auto;
+    min-width: 0;
     border: 0;
-    background: none;
-    color: #6c757d;
-    padding: 0 0.3rem;
+    outline: 0;
+    background: transparent;
+    padding: 0.95rem 0.5rem 0.95rem 3rem;
+    font-size: 1.05rem;
+    color: var(--dt-text);
 }
 
-.gs-results {
+.search-clear,
+.search-submit {
+    border: 0;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-clear {
+    background: none;
+    color: var(--dt-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.search-clear:hover {
+    background: var(--dt-workspace);
+}
+
+.search-submit {
+    background: var(--dt-blue);
+    color: #fff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    margin: 0 0.35rem;
+}
+
+.search-submit:hover,
+.search-submit:focus-visible {
+    background: var(--dt-blue-dark);
+}
+
+.suggest-box {
     position: absolute;
-    top: calc(100% + 4px);
+    top: calc(100% + 6px);
     left: 0;
-    width: 420px;
-    max-width: 90vw;
-    max-height: 70vh;
+    right: 0;
+    max-height: 60vh;
     overflow-y: auto;
     background: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--dt-border);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(31, 42, 55, 0.16);
     z-index: 1080;
+    padding: 0.35rem 0;
 }
 
-.gs-group {
-    padding: 0.4rem 0.75rem 0.15rem;
+.suggest-group {
+    padding: 0.5rem 1rem 0.2rem;
     font-size: 0.7rem;
     font-weight: 700;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #6c757d;
+    color: var(--dt-muted);
 }
 
-.gs-item {
+.suggest-item {
     display: flex;
-    gap: 0.6rem;
+    gap: 0.75rem;
     align-items: flex-start;
-    padding: 0.4rem 0.75rem;
+    padding: 0.45rem 1rem;
     cursor: pointer;
-    color: #212529;
-    font-size: 0.875rem;
+    font-size: 0.92rem;
 }
 
-.gs-item i {
+.suggest-item i {
     width: 1rem;
     margin-top: 0.2rem;
-    color: #0d6efd;
+    color: var(--dt-blue);
 }
 
-.gs-item.active,
-.gs-item:hover {
-    background: #e9f2ff;
+.suggest-item.active,
+.suggest-item:hover {
+    background: var(--dt-blue-light);
 }
 
-.gs-sub,
-.gs-state {
+.suggest-text {
+    min-width: 0;
+}
+
+.suggest-sub,
+.search-state,
+.suggest-footer {
+    font-size: 0.78rem;
+    color: var(--dt-muted);
+}
+
+.search-state {
+    padding: 0.6rem 1rem;
+}
+
+.suggest-footer {
+    border-top: 1px solid var(--dt-border);
+    margin-top: 0.35rem;
+    padding: 0.45rem 1rem 0.2rem;
+}
+
+/* With the input docked at the bottom during a conversation, open suggestions upwards */
+.search-app.is-report.has-chat .suggest-box {
+    top: auto;
+    bottom: calc(100% + 6px);
+}
+.mode-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.mode-tab {
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    color: var(--dt-text);
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mode-tab:hover {
+    border-color: var(--dt-blue-mid);
+}
+
+.mode-tab:focus-visible {
+    outline: 2px solid var(--dt-blue-mid);
+    outline-offset: 2px;
+}
+
+.mode-tab.active {
+    background: var(--dt-blue);
+    border-color: var(--dt-blue);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(11, 79, 156, 0.25);
+}
+
+.mode-tab-title {
+    display: block;
+    font-weight: 600;
+}
+
+.mode-tab-title i {
+    margin-right: 0.35rem;
+    color: var(--dt-blue);
+}
+
+.mode-tab.active .mode-tab-title i {
+    color: #fff;
+}
+
+.mode-tab-desc {
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    color: var(--dt-muted);
+}
+
+.mode-tab.active .mode-tab-desc {
+    color: rgba(255, 255, 255, 0.88);
+}
+
+/* Results layout: search bar at the top, compact tabs, results below */
+.search-app.is-results .search-hero,
+.search-app.is-results .mode-tab-desc {
+    display: none;
+}
+
+.search-app.is-results .search-shell {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--dt-workspace);
+    padding: 1rem 0 0;
+    border-bottom: 1px solid var(--dt-border);
+}
+
+.search-app.is-results .mode-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.search-app.is-results .mode-tab {
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    padding: 0.5rem 0.9rem;
+    color: var(--dt-muted);
+    box-shadow: none;
+}
+
+.search-app.is-results .mode-tab.active {
+    color: var(--dt-blue);
+    border-bottom-color: var(--dt-blue);
+}
+
+.search-app.is-results .mode-tab.active .mode-tab-title i {
+    color: var(--dt-blue);
+}
+
+.results-meta {
+    font-size: 0.85rem;
+    color: var(--dt-muted);
+    margin: 1rem 0 0.75rem;
+}
+
+.result-group {
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.result-group-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dt-muted);
+    margin: 0;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--dt-border);
+    background: #fafbfd;
+}
+
+.result-group-title .badge {
+    background: var(--dt-blue-light);
+    color: var(--dt-blue-dark);
+    margin-left: 0.35rem;
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 1rem;
+    color: var(--dt-text);
+    border-bottom: 1px solid #eef1f5;
+}
+
+.result-item:last-child {
+    border-bottom: 0;
+}
+
+.result-item:hover,
+.result-item:focus-visible {
+    background: var(--dt-blue-light);
+    color: var(--dt-text);
+    text-decoration: none;
+    outline: none;
+}
+
+.result-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--dt-blue-light);
+    color: var(--dt-blue);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.result-label {
+    font-weight: 600;
+    color: var(--dt-blue-dark);
+}
+
+.result-sub {
+    font-size: 0.8rem;
+    color: var(--dt-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.result-chevron {
+    color: #b3bdca;
+    font-size: 0.8rem;
+}
+
+.results-empty {
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    color: var(--dt-blue-mid);
+    margin-bottom: 0.75rem;
+}
+
+/* ---------- Report Search: AI report chat inside Home ---------- */
+.report-tools,
+.report-panel {
+    display: none;
+}
+
+.search-app.is-report .report-tools,
+.search-app.is-report .report-panel {
+    display: block;
+}
+
+.search-mic {
+    display: inline-flex;
+    border: 0;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: none;
+    color: var(--dt-muted);
+}
+
+.search-mic:hover {
+    background: var(--dt-workspace);
+    color: var(--dt-blue);
+}
+
+.search-mic.is-listening {
+    background: #fde8ea;
+    color: var(--danger-color);
+}
+
+.search-app.chat-busy .search-submit {
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+}
+
+.tool-btn {
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    color: var(--dt-text);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.82rem;
+}
+
+.tool-btn:hover,
+.tool-btn:focus-visible,
+.tool-btn[aria-expanded="true"] {
+    background: var(--dt-blue-light);
+    border-color: #c9dcf3;
+    color: var(--dt-blue-dark);
+}
+
+.tool-btn i {
+    margin-right: 0.25rem;
+}
+
+/* "New conversation" only makes sense once a conversation is on screen. */
+.search-app:not(.has-chat) .new-chat-btn {
+    display: none;
+}
+
+.chat-status {
+    font-size: 0.8rem;
+    color: var(--dt-blue-dark);
+}
+
+.ai-info {
+    margin-left: auto;
     font-size: 0.75rem;
-    color: #6c757d;
+    color: var(--dt-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
-.gs-state {
-    padding: 0.5rem 0.75rem;
+.filters-card {
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    padding: 0.75rem 0.9rem;
+    margin-top: 0.6rem;
 }
 
-@media (min-width: 992px) and (max-width: 1399.98px) {
-    .global-search-box {
-        width: 200px;
-    }
-
-    .navbar-nav .nav-link {
-        margin: 0 0.15rem;
-    }
+.report-panel {
+    margin-top: 1.5rem;
 }
 
-@media (max-width: 991.98px) {
-    .global-search {
-        margin: 0.5rem 0;
+.section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--dt-muted);
+    margin-bottom: 0.5rem;
+}
+
+.section-label i {
+    color: var(--dt-blue);
+    margin-right: 0.25rem;
+}
+
+.try-asking {
+    margin-bottom: 1.25rem;
+}
+
+.history-panel {
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+}
+
+.history-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.45rem 0.5rem 0.45rem 0.9rem;
+    border-bottom: 1px solid var(--dt-border);
+}
+
+.history-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    color: var(--dt-muted);
+}
+
+.history-action:hover,
+.history-action:focus-visible {
+    background: var(--dt-blue-light);
+    color: var(--dt-blue-dark);
+}
+
+.history-list {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+/* Recent Questions sits in a fixed right-side panel. The search column is centred and narrow enough to leave room
+   for the 320px panel on both sides, in BOTH modes, so switching Application/Report Search never moves anything. */
+html {
+    scrollbar-gutter: stable;
+}
+
+@media (min-width: 992px) {
+    .search-app {
+        max-width: min(760px, calc(100vw - 2 * (320px + 2rem)));
     }
 
-    .global-search-box,
-    .gs-results {
+    .search-app.is-report .report-panel > .history-panel {
+        position: fixed;
+        top: calc(56px + 1rem);
+        right: 1rem;
+        bottom: 1rem;
+        width: 320px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 20;
+        box-shadow: 0 4px 16px rgba(31, 42, 55, 0.06);
+    }
+
+    .search-app.is-report .report-panel > .history-panel.d-none {
+        display: none !important;
+    }
+
+    .search-app.is-report .history-list {
+        max-height: none;
+        flex: 1 1 auto;
+    }
+}
+.report-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+}
+
+.chip {
+    border: 1px solid #d3e1f2;
+    background: var(--dt-blue-light);
+    color: var(--dt-blue-dark);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.3;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.chip:hover,
+.chip:focus-visible {
+    background: var(--dt-blue);
+    border-color: var(--dt-blue);
+    color: #fff;
+}
+
+.chip:active {
+    transform: scale(0.97);
+}
+
+.chip-ghost {
+    background: #fff;
+    border-color: var(--dt-border);
+    color: var(--dt-text);
+    font-weight: 400;
+    text-align: left;
+}
+
+.related-reports {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Conversation */
+.chat-thread .msg-user {
+    background: var(--dt-blue);
+    color: #fff;
+    border-radius: 16px 16px 4px 16px;
+    max-width: 75%;
+    width: fit-content;
+    margin-left: auto;
+    box-shadow: 0 2px 6px rgba(11, 79, 156, 0.2);
+}
+
+.chat-thread .msg-ai {
+    background: #fff;
+    border: 1px solid var(--dt-border);
+    border-radius: 16px 16px 16px 4px;
+    box-shadow: 0 1px 4px rgba(31, 42, 55, 0.05);
+    scroll-margin-top: 1rem;
+}
+
+.report-table {
+    font-size: 0.85rem;
+}
+
+.report-table td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.chart-box {
+    position: relative;
+    height: 280px;
+}
+
+.history-item {
+    font-size: 0.82rem;
+}
+
+/* Once the conversation starts: thread first, input docked at the bottom */
+.search-app.is-report.has-chat .search-hero,
+.search-app.is-report.has-chat .try-asking {
+    display: none;
+}
+
+.search-app.is-report.has-chat {
+    padding-top: 1rem;
+    padding-bottom: 0;
+    min-height: calc(100vh - 60px);
+}
+
+.search-app.is-report.has-chat .report-panel {
+    order: 1;
+    flex: 1 1 auto;
+    margin-top: 0;
+}
+
+.search-app.is-report.has-chat .search-shell {
+    order: 2;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(243, 245, 248, 0) 0%, var(--dt-workspace) 22%);
+    padding: 1.25rem 0 0.9rem;
+}
+
+.search-app.is-report.has-chat .mode-tab-desc {
+    display: none;
+}
+
+.search-app.is-report.has-chat .mode-tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+}
+
+.search-app.is-report.has-chat .mode-tab {
+    padding: 0.25rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    box-shadow: none;
+}
+
+.search-app.is-report.has-chat .tools-row {
+    margin-top: 0.45rem;
+}
+
+@media (max-width: 575.98px) {
+    .mode-tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .search-input {
+        font-size: 1rem;
+    }
+
+    .search-app.is-results .mode-tab {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    .chat-thread .msg-user {
+        max-width: 90%;
+    }
+
+    .ai-info {
+        margin-left: 0;
         width: 100%;
-        max-width: none;
     }
 }
 
@@ -469,10 +1497,6 @@ a:hover {
    ===================================================================== */
 
 @media (max-width: 768px) {
-    .login-card {
-        margin: 1rem;
-    }
-
     .navbar-brand {
         font-size: 1rem;
     }
@@ -490,10 +1514,6 @@ a:hover {
 @media (max-width: 576px) {
     body {
         font-size: 0.9rem;
-    }
-
-    .login-card .card-body {
-        padding: 1.5rem;
     }
 
     .navbar-brand {

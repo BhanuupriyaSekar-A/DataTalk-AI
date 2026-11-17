@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -14,7 +15,9 @@ import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * Small smoke test for login, role-based access and the ADMIN-only analytics API.
@@ -89,6 +92,18 @@ class LoginAndAccessIntegrationTest {
         mockMvc.perform(get("/api/reports").session(login("techpay_customer")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[*].category", everyItem(not("settlement"))));
+    }
+
+    @Test
+    void homeIsTheLandingPageAfterLogin() throws Exception {
+        mockMvc.perform(get("/home").accept(MediaType.TEXT_HTML)).andExpect(status().is3xxRedirection());
+        MockHttpSession session = login("techpay_customer");
+        mockMvc.perform(get("/home").session(session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("home"));
+        mockMvc.perform(get("/").session(session)).andExpect(redirectedUrl("/home"));
+        mockMvc.perform(get("/chat").param("report", "fees-fees-report").session(session))
+                .andExpect(redirectedUrl("/home?mode=report&report=fees-fees-report"));
     }
 
     @Test

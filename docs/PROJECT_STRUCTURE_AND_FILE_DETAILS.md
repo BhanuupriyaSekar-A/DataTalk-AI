@@ -1,6 +1,6 @@
-# DataTalk AI – Project Structure and File Details
+# SL Talk AI – Project Structure and File Details
 
-> Reference guide to every important folder and file in the DataTalk AI POC.
+> Reference guide to every important folder and file in the SL Talk AI POC.
 > Generated from the actual source code (Phase 1 + Phase 2 + Phase 3). Where behaviour could not be
 > confirmed from the code, it is marked **(uncertain)**.
 
@@ -8,10 +8,10 @@
 
 ## 1. Overview
 
-DataTalk AI is a personal proof-of-concept for **natural-language business reporting**:
+SL Talk AI is a personal proof-of-concept for **natural-language business reporting**:
 
 1. A user logs in (session-based, BCrypt passwords, roles `ADMIN`, `BUSINESS`, `MANAGER`, `CUSTOMER`).
-2. The user types a business question in the chat page (or runs a predefined report).
+2. The user types a business question in Home > Report Search (or runs a predefined report).
 3. The backend builds a prompt from **approved schema metadata** and **predefined report examples**, and sends it to
    an AI provider via a **fallback chain** (Groq → Gemini → NVIDIA by default; OpenAI is also supported).
 4. The AI returns a JSON report definition containing a PostgreSQL `SELECT`.
@@ -26,7 +26,7 @@ DataTalk AI is a personal proof-of-concept for **natural-language business repor
 JSqlParser 4.9, OpenPDF 1.3.43, Apache POI (poi-ooxml) 5.2.5, Lombok, Jackson. Front end: Thymeleaf HTML pages,
 Bootstrap 5.3 / Font Awesome 6.4 (CDN), Chart.js 4.4.1 (CDN), vanilla JavaScript.
 
-Application base URL: `http://localhost:8081/datatalk` (`server.port=8081`, `server.servlet.context-path=/datatalk`).
+Application base URL: `http://localhost:8081/sltalk` (`server.port=8081`, `server.servlet.context-path=/sltalk`).
 
 ---
 
@@ -148,13 +148,16 @@ DataTalk-AI---POC/
     │       │       └── 02-weekly-net-settlement.sql
     │       ├── static/
     │       │   ├── css/style.css
-    │       │   └── js/chat.js
+    │       │   ├── img/logo.svg
+    │       │   └── js/ (chat.js, navbar.js, records.js, search.js)
     │       └── templates/
     │           ├── analytics.html
-    │           ├── chat.html
     │           ├── dashboard.html
+    │           ├── fragments/navbar.html
+    │           ├── home.html
     │           ├── login.html
-    │           └── poc-info.html
+    │           ├── poc-info.html
+    │           └── records.html
     └── test/java/com/datatalk/datatalkai/
         ├── LoginAndAccessIntegrationTest.java
         ├── ai/AiProviderChainTest.java
@@ -188,7 +191,7 @@ DataTalk-AI---POC/
 | `…service` | Phase 1 services (authentication, dashboard summary). |
 | `resources/predefined-reports/<category>/` | SQL report templates with header metadata (name, description, params, examples, chart). |
 | `resources/templates/` | Thymeleaf HTML pages (login, dashboard, chat, analytics, poc-info). |
-| `resources/static/` | Shared CSS (`css/style.css`) and the chat page script (`js/chat.js`), served at `/datatalk/static/**`. |
+| `resources/static/` | Shared CSS (`css/style.css`) and scripts (`js/search.js` Home search, `js/chat.js` Report Search AI chat, `js/navbar.js`, `js/records.js`), served at `/sltalk/static/**`. |
 | `src/test/java/…` | JUnit 5 unit tests (validator, AI chain) and a Spring Boot integration smoke test. |
 
 ---
@@ -207,9 +210,9 @@ DataTalk-AI---POC/
 - **Purpose:** All runtime configuration; secrets come from environment variables or the git-ignored `.env`.
 - **Main responsibility (sections):**
   - `spring.config.import=optional:file:.env[.properties]` – loads local `KEY=value` file if present; real env vars still win.
-  - Server: port `8081`, context path `/datatalk`, session cookie http-only, session timeout `30m`.
+  - Server: port `8081`, context path `/sltalk`, session cookie http-only, session timeout `30m`.
   - Datasource (Neon PostgreSQL) + HikariCP pool (max 20, min idle 5).
-  - Logging: `DEBUG` for `com.datatalk.datatalkai` and Spring Security; file `logs/datatalk-ai.log` (10 MB, 10 files).
+  - Logging: `DEBUG` for `com.datatalk.datatalkai` and Spring Security; file `logs/sltalk-ai.log` (10 MB, 10 files).
   - Jackson: `non_null` inclusion, ISO dates, indented output. Thymeleaf: cache off, `classpath:/templates/`.
   - `spring.mvc.static-path-pattern=/static/**`.
   - `app.ai.*` – AI provider chain, models, URLs, timeouts, trust store.
@@ -242,7 +245,7 @@ DataTalk-AI---POC/
   - `permitAll`: `/login`, `/api/login`, `/static/**`, `/health`, `/info`, `/poc-info`.
   - `hasRole("ADMIN")`: `/analytics`, `/api/admin/**`.
   - Everything else: `authenticated()`.
-  - Form login configured (`/login`, success → `/dashboard`), logout at `/logout` (invalidates session, deletes `JSESSIONID`).
+  - Form login configured (`/login`, success → `/home`), logout at `/logout` (invalidates session, deletes `JSESSIONID`).
     The UI itself logs in through the JSON endpoint `/api/login`; whether the form-login processing URL is functional
     (no `UserDetailsService` bean was found) is **uncertain**.
   - CSRF: cookie token repository, ignored for `/api/**`.
@@ -329,11 +332,12 @@ customer 3), `gas_operator` (CUSTOMER, customer 4). All use the documented demo 
   | Method | Route | Behaviour |
   |---|---|---|
   | `login()` | `GET /login` | `login.html` |
+  | `home(HttpSession)` | `GET /home` | `home.html` (landing page after login: central Application / Report search); redirect to `/login` if not logged in |
   | `dashboard(HttpSession)` | `GET /dashboard` | redirect to `/login` if no `userId` in session |
-  | `chat(HttpSession)` | `GET /chat` | redirect to `/login` if not logged in |
-  | `analytics(HttpSession)` | `GET /analytics` | redirect to `/login` if not logged in, to `/dashboard` if role ≠ ADMIN (SecurityConfig already returns 403 for non-admins) |
+  | `chat(report, name, ask)` | `GET /chat` | former AI Chat page: redirects to `/home?mode=report` (Report Search), forwarding `report`, `name` and `ask` |
+  | `analytics(HttpSession)` | `GET /analytics` | redirect to `/login` if not logged in, to `/home` if role ≠ ADMIN (SecurityConfig already returns 403 for non-admins) |
   | `pocInfo()` | `GET /poc-info` | `poc-info.html` (public) |
-  | `root()` | `GET ""` | redirect to `/login` |
+  | `root(HttpSession)` | `GET ""`, `GET /` | redirect to `/home` when logged in, otherwise to `/login` |
 
 ### `controller/DashboardApiController.java` (`/api/dashboard`)
 - **Important methods:** `getDashboardSummary(HttpSession)` – `GET /api/dashboard/summary`; ADMIN → system summary,
@@ -346,40 +350,57 @@ customer 3), `gas_operator` (CUSTOMER, customer 4). All use the documented demo 
 ### Templates (`src/main/resources/templates/`)
 | File | Purpose | Calls / behaviour |
 |---|---|---|
-| `login.html` | Login form (Bootstrap). | Inline script `POST /datatalk/api/login`, then redirects to `/datatalk/dashboard`; `showAlert()` helper; link to `poc-info`. |
-| `dashboard.html` | Welcome page with user id, role, customer, summary cards. | Inline script: `GET /api/user-info`, `loadDashboardSummary()` → `GET /api/dashboard/summary`, `logout()` → `POST /api/logout`. Shows the hidden `analyticsNav` link only when role is `ADMIN`. |
-| `chat.html` | AI chat page: sidebar with predefined reports (`reportList`), history (`historyList`), AI model info (`aiModelInfo`), filters (`filterFrom`, `filterTo`, `filterStatus`), message area (`chatMessages`), question form (`askForm`, `questionInput`, `charCount`). | Loads Bootstrap, Chart.js 4.4.1 (CDN) and `/datatalk/static/js/chat.js`. ADMIN-only nav link `analyticsNav`. |
-| `analytics.html` | ADMIN Query Analytics page: period selector (`days`: 7/30/90/all), KPI cards (total, successful, failed/rejected, active users, avg AI answer time, avg SQL-only time) and tables (popular reports, AI provider usage, answer source, failure reasons, export jobs). | Inline script (`th:inline="none"`): `load()` → `GET /datatalk/api/admin/analytics?days=N`, helpers `ms()`, `table()`, `logout()`. |
+| `login.html` | Login page: light background with subtle animated accents, white card with icon inputs, show-password toggle and demo-account chips (fill the form only). | Inline script `POST /sltalk/api/login`, then redirects to `/sltalk/home`; `showAlert()` helper; link to `poc-info`. |
+| `home.html` | Chatbot-style home with one search bar and two modes. **Application Search**: centred search, then Google-style grouped results (`?mode=app&q=...`). **Report Search** (`?mode=report`): the AI report chat – Recent Questions panel (shown by default as a right-side panel on screens ≥ 992px, above the conversation on smaller screens; can be hidden), example requests, Filters / Recent questions / New conversation tools, conversation area (`chatMessages`); once the conversation starts the search bar docks at the bottom. Keeps the element ids used by `chat.js` (`historyPanel`, `historyList`, `aiModelInfo`, `filterFrom`, `filterTo`, `filterStatus`, `micBtn`). | Loads Bootstrap, Chart.js 4.4.1 (CDN), `chat.js` and `search.js`. |
+| `fragments/navbar.html` | Minimal header for signed-in pages: logo (→ `/home`), Search button, user menu (Home, Project Info, Logout). No module menus or separate AI Chat entry; pages are reached through the Home search. | Loads `/sltalk/static/js/navbar.js` (user name/role, `logout()`). |
+| `dashboard.html` | Welcome page with user id, role, customer, summary cards. | Inline script: `GET /api/user-info`, `loadDashboardSummary()` → `GET /api/dashboard/summary`, `logout()` → `POST /api/logout`. |
+| `chat.html` | AI chat page in three columns: collapsible left panel "Instant Reports" (`reportsPanel` / `reportList`), center chat, collapsible right panel "Recent Questions" (`historyPanel` / `historyList`); AI model info (`aiModelInfo`), filters (`filterFrom`, `filterTo`, `filterStatus`), message area (`chatMessages`), question form (`askForm`, `questionInput`, `charCount`). Panel open/closed state is kept in `localStorage`. | Loads Bootstrap, Chart.js 4.4.1 (CDN) and `/sltalk/static/js/chat.js`. `?report=<id>&name=...` runs an instant report (no AI call); `?ask=<text>` prefills the question box without sending it. |
+| `analytics.html` | ADMIN Query Analytics page: period selector (`days`: 7/30/90/all), KPI cards (total, successful, failed/rejected, active users, avg AI answer time, avg SQL-only time) and tables (popular reports, AI provider usage, answer source, failure reasons, export jobs). | Inline script (`th:inline="none"`): `load()` → `GET /sltalk/api/admin/analytics?days=N`, helpers `ms()`, `table()`, `logout()`. |
 | `poc-info.html` | Static public project information page (overview, features, tech stack, schemas, phases, completed/partial/pending work, last updated). | No API calls besides Bootstrap. |
 
 ### Static assets
+#### `static/js/search.js`
+- **Purpose:** Home search with two modes. **Application Search** (no AI calls) matches pages and actions in the
+  browser (admin-only entries hidden for non-admins), instant reports, and customers / devices / transactions / locations
+  from `GET /api/search` (same user scope as the record pages). A record-type word in the query ("customer ABC",
+  "Chennai location", "device 12") limits record results to that type. Records open their read-only details
+  (`/customers?id=N`, ...). Searching happens only on submit (Enter or the search button; there is no as-you-type
+  dropdown) and opens the grouped results view (`?mode=app&q=...`).
+- **Report Search** (`?mode=report`) is the AI report chat: submitting sends the question to `chat.js` (`window.SLTalkChat.ask`
+  → `POST /api/chat/ask`). Instant reports that fully match a sent question (ranked in the browser by name, category and
+  description) are shown next to the AI answer and run via `POST /api/reports/{id}/run` (no AI call). Recent Questions
+  are shown every time Report Search is opened (`chat.showHistory(true)`). `?report=<id>&name=...` runs an instant
+  report and `?ask=<text>` prefills a question (not sent).
+- Keyboard: Enter submits, Esc clears, ←/→ switch the mode tabs; browser back/forward, loading, error and no-results states.
+
 #### `static/js/chat.js`
-- **Purpose:** All client logic of the chat page (API base `'/datatalk/api'`; on HTTP 401 it redirects to login).
+- **Purpose:** AI report chat shown in Home > Report Search (API base `'/sltalk/api'`; on HTTP 401 it redirects to login).
+  The question input is the Home search bar; `search.js` calls it through `window.SLTalkChat`
+  (`ask(question, related)`, `runReport(id, name)`, `reports` promise of `GET /api/reports`, `isBusy()`).
 - **Important functions:**
   | Function | Description |
   |---|---|
   | `api(path, options)` | `fetch` wrapper with JSON headers; handles 401 and `success=false`. |
-  | `filters()`, `filterQuery()`, `resetFilters()` | Read/serialize/reset the date-range and status filters. |
-  | `ask(question)` | `POST /api/chat/ask` and renders the answer. |
+  | `filters()`, `filterQuery()`, `resetFilters()` | Read/serialize/reset the date-range and status filters (Filters button). |
+  | `ask(question, related)` | `POST /api/chat/ask` and renders the answer; shows matching instant reports as one-click chips. |
   | `runReport(reportId, name)` | `POST /api/reports/{id}/run`. |
-  | `renderAnswer(container, r)` | Renders title, explanation, model badge, status/errors, SQL details, export buttons. |
+  | `renderAnswer(container, r)` | Renders title, explanation, model badge, status/errors, export buttons (the generated SQL is not shown to users). |
   | `renderPage(container, page)` | Renders a result table page with pagination. |
   | `renderChart(container, page)` | Draws a Chart.js bar/line/pie chart (destroys previous instance). |
   | `loadPage(chatId, page, pageSize)`, `applyFilters(chatId)` | `GET /api/chat/{chatId}/results` with filters. |
   | `exportReport(chatId, format, btn)` | `GET /api/chat/{chatId}/export?format=…`; downloads the file or, on HTTP 202, starts polling. |
   | `pollExport(jobId)` | Polls `GET /api/exports/{jobId}`, then downloads from `/api/exports/{jobId}/download`. |
-  | `clearConversation()` | `POST /api/chat/conversation/new`. |
-  | `loadReports()` | `GET /api/reports` – fills the predefined reports list. |
-  | `loadHistory()` | `GET /api/chat/history?limit=15`. |
-  | `loadAiInfo()` | `GET /api/chat/ai-info` – shows the provider chain. |
-  | `modelBadge(r)`, `sqlDetails(sql)`, `formatCell(v, type)`, `esc(v)` | Rendering helpers (HTML escaping, number/date formatting). |
-  | `logout()` | `POST /api/logout` then redirect to `/datatalk/login?logout=true`. |
-  | `DOMContentLoaded` handler | Loads `/api/user-info` (shows ADMIN nav), wires the form, Enter-to-send, character counter, example questions. |
+  | `clearConversation()` | `POST /api/chat/conversation/new` (New conversation button). |
+  | `showHistory(show)`, `toggleHistory()` | Show/hide the Recent Questions panel (visible by default; × hides it, the Recent questions button toggles it). |
+  | `loadHistory()` | `GET /api/chat/history?limit=15` into the Recent Questions panel; clicking an entry prefills the search bar. |
+  | `loadAiInfo()` | `GET /api/chat/ai-info` – shows the primary provider/model. |
+  | `initVoice()` | Browser speech recognition into the search bar (mic button). |
+  | `modelBadge(r)`, `formatCell(v, type)`, `esc(v)` | Rendering helpers (HTML escaping, number/date formatting). |
 
 #### `static/css/style.css`
-- **Purpose:** Shared stylesheet. Sections: Global, Login Page, Navigation, Card, Dashboard, Alert, Form, Button,
-  Table, Utility, Responsive Design, Print, Loading Spinner, Animation, Custom Scrollbar.
-  (`chat.html` additionally has a small inline `<style>` block for chat bubbles.)
+- **Purpose:** Shared stylesheet. Sections: Global (DMS/SeedLive blue palette variables), Login Page, Navigation,
+  Home search and results, Report Search chat, Card, Dashboard, Alert, Form, Button, Table, Utility, Responsive Design,
+  Print, Loading Spinner, Animation, Custom Scrollbar.
 
 ---
 
@@ -692,8 +713,8 @@ Dependencies: `AccessPolicyService`, `ChatService`, `ReportExportService`, `Expo
   requires `ROLE_ADMIN`) and an in-method check of the DB role via `AccessPolicyService` (403 `ADMIN_ONLY`).
 - Dependencies: `AccessPolicyService`, `QueryAnalyticsService`.
 
-UI: `templates/analytics.html`, route `/analytics` (`PageController.analytics`), nav link shown only to ADMIN in
-`dashboard.html` and `chat.html`.
+UI: `templates/analytics.html`, route `/analytics` (`PageController.analytics`), reachable for ADMIN through
+Application Search ("Query Analytics").
 
 ---
 
@@ -809,12 +830,12 @@ variables take precedence. Never commit it.
 ## 18. How a request flows
 
 ### Login
-1. `login.html` → `POST /datatalk/api/login` (permitted in `SecurityConfig`).
+1. `login.html` → `POST /sltalk/api/login` (permitted in `SecurityConfig`).
 2. `AuthApiController.login` → `AuthenticationService.authenticate` → `UserRepository.findByUsername` + BCrypt
    `PasswordEncoder.matches` → `UserRepository.logLoginAttempt`; `CustomerRepository.findById` for the customer name.
 3. Controller changes the session id, stores the Spring `SecurityContext` (`ROLE_<role>`) and session attributes.
-4. Browser redirects to `/dashboard` → `PageController.dashboard` → `dashboard.html` → `GET /api/user-info`,
-   `GET /api/dashboard/summary` (`DashboardApiController` → `DashboardService` → `CustomerRepository`).
+4. Browser redirects to `/home` → `PageController.home` → `home.html` (central search; `search.js` → `GET /api/user-info`,
+   `GET /api/reports`, and `GET /api/search` while typing).
 
 ### Ask a question
 1. `chat.js ask()` → `POST /api/chat/ask` → `ChatApiController.ask`.
@@ -828,8 +849,9 @@ variables take precedence. Never commit it.
    Further pages: `GET /api/chat/{chatId}/results` → `ChatService.results`.
 
 ### Run a predefined report
-1. `chat.js loadReports()` → `GET /api/reports` → `ReportApiController.list` → `ChatService.availableReports`
-   (each report rendered + validated for the user's scope).
+1. `chat.js reportsPromise` → `GET /api/reports` → `ReportApiController.list` → `ChatService.availableReports`
+   (each report rendered + validated for the user's scope); offered as matching reports next to AI answers and in
+   Application Search results.
 2. Click → `POST /api/reports/{id}/run` → `ReportApiController.run` → `ChatService.runReport`
    → `PredefinedReportService.find/renderSql` → `SqlSafetyValidator.validate` → `ReportExecutionService.executePage`
    → history (`source = PREDEFINED`) → `ChatResult`.

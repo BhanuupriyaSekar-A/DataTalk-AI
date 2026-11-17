@@ -69,7 +69,7 @@ public class ReportExportService {
         Font headFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, Color.WHITE);
         Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
         doc.add(new Paragraph(title, titleFont));
-        doc.add(new Paragraph("DataTalk AI report - generated " + LocalDateTime.now().format(STAMP)
+        doc.add(new Paragraph("SL Talk AI report - generated " + LocalDateTime.now().format(STAMP)
                 + " for " + generatedFor, infoFont));
         doc.add(new Paragraph(" ", infoFont));
 

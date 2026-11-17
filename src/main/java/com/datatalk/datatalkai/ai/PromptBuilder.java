@@ -27,7 +27,7 @@ public final class PromptBuilder {
     public static String systemPrompt(ReportingCatalog catalog, UserScope scope, List<Example> examples) {
         StringBuilder sb = new StringBuilder();
         sb.append("""
-                You are DataTalk AI, a PostgreSQL reporting assistant for a cashless payment and device management company.
+                You are SL Talk AI, a PostgreSQL reporting assistant for a cashless payment and device management company.
                 Convert the user's business question into ONE read-only PostgreSQL SELECT query using ONLY the tables
                 and columns listed below. Answer with a single JSON object and nothing else:
                 {"answerable": true|false, "understanding": "...", "sql": "...", "title": "...",

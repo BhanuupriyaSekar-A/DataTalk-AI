@@ -88,12 +88,12 @@ BCrypt Hash: `$2a$10$2j.5.6EGZhg9Z4eK4qk0l.qXFwGJ2V9bq5Y3X8Pl8Xz9K6vB8R.vW`
 
 | Username | Role | Customer | Email |
 |----------|------|----------|-------|
-| admin_user | ADMIN | - | admin@datatalk.com |
-| techpay_manager | BUSINESS | TechPay Solutions | john.manager@techpay.com |
-| techpay_customer | CUSTOMER | TechPay Solutions | sarah@techpay.com |
-| retail_manager | MANAGER | RetailHub Inc | mike@retailhub.com |
-| restaurant_owner | BUSINESS | Restaurant Group USA | david@restgrp.com |
-| gas_operator | CUSTOMER | Gas Station Network | emma@gasnet.com |
+| admin_user | ADMIN | - | bhanupriya@datatalk.com |
+| techpay_manager | BUSINESS | TechPay Solutions | arjun.mehta@techpay.com |
+| techpay_customer | CUSTOMER | TechPay Solutions | priya.raman@techpay.com |
+| retail_manager | MANAGER | RetailHub Inc | michael.carter@retailhub.com |
+| restaurant_owner | BUSINESS | Restaurant Group USA | daniel.brooks@restgrp.com |
+| gas_operator | CUSTOMER | Gas Station Network | emily.watson@gasnet.com |
 
 ## Sample Data
 

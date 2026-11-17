@@ -1,6 +1,6 @@
-# DataTalk AI – Database Design
+# SL Talk AI – Database Design
 
-This document describes the **actual** database used by the DataTalk AI POC. It is derived from the SQL
+This document describes the **actual** database used by the SL Talk AI POC. It is derived from the SQL
 scripts in `database\` and from the SQL issued by the Java code in `src\main\java`. Where the scripts and
 the running database can differ, this is stated explicitly.
 
@@ -495,12 +495,12 @@ Passwords are **not** listed here – see `docs\DEMO_USERS_GUIDE.md`.
 
 | user_id | Username | Full name | Role | customer_id | Customer |
 |---------|----------|-----------|------|-------------|----------|
-| 1 | `admin_user` | Admin System | ADMIN | NULL | – (all customers) |
-| 2 | `techpay_manager` | John Manager | BUSINESS | 1 | TechPay Solutions |
-| 3 | `techpay_customer` | Sarah Customer | CUSTOMER | 1 | TechPay Solutions |
-| 4 | `retail_manager` | Mike Retail | MANAGER | 2 | RetailHub Inc |
-| 5 | `restaurant_owner` | David Chef | BUSINESS | 3 | Restaurant Group USA |
-| 6 | `gas_operator` | Emma Operator | CUSTOMER | 4 | Gas Station Network |
+| 1 | `admin_user` | Bhanupriya | ADMIN | NULL | – (all customers) |
+| 2 | `techpay_manager` | Arjun Mehta | BUSINESS | 1 | TechPay Solutions |
+| 3 | `techpay_customer` | Priya Raman | CUSTOMER | 1 | TechPay Solutions |
+| 4 | `retail_manager` | Michael Carter | MANAGER | 2 | RetailHub Inc |
+| 5 | `restaurant_owner` | Daniel Brooks | BUSINESS | 3 | Restaurant Group USA |
+| 6 | `gas_operator` | Emily Watson | CUSTOMER | 4 | Gas Station Network |
 
 Customer 5 (Quick Commerce Express) has no user.
 

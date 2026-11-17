@@ -10,8 +10,8 @@
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
-    <name>DataTalk AI POC</name>
-    <description>DataTalk AI - Natural Language Business Data Analytics (Phase 2: AI Natural Language Reporting)</description>
+    <name>SL Talk AI POC</name>
+    <description>SL Talk AI - Natural Language Business Data Analytics (Phase 2: AI Natural Language Reporting)</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

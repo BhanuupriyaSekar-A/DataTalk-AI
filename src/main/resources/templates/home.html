@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SL Talk AI - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/sltalk/static/img/logo.svg">
+    <link rel="stylesheet" href="/sltalk/static/css/style.css">
+</head>
+<body class="workspace">
+    <nav th:replace="~{fragments/navbar :: navbar('home')}"></nav>
+
+    <!-- search.js sets the state: is-home (centred), is-results (Application Search results) or
+         is-report (Report Search = AI chat; has-chat once the conversation has messages). -->
+    <main class="search-app is-home" id="searchApp">
+        <section class="search-hero">
+            <img src="/sltalk/static/img/logo.svg" alt="" class="hero-logo" width="64" height="64">
+            <div class="hero-name">SL Talk<span class="brand-ai">AI</span></div>
+            <h1 class="hero-title">How can I help you today?</h1>
+        </section>
+
+        <div class="search-shell">
+            <form class="search-box" id="searchForm" role="search" autocomplete="off">
+                <i class="fas fa-magnifying-glass search-box-icon" aria-hidden="true"></i>
+                <input type="text" id="searchInput" class="search-input" maxlength="100" autofocus
+                       placeholder="Search anything in SL Talk AI..." aria-label="Search"
+                       role="combobox" aria-expanded="false" aria-controls="suggestBox" aria-autocomplete="list">
+                <button type="button" class="search-clear d-none" id="searchClear" aria-label="Clear"><i class="fas fa-xmark"></i></button>
+                <button type="button" class="search-mic" id="micBtn" title="Voice input" aria-label="Voice input"><i class="fas fa-microphone"></i></button>
+                <button type="submit" class="search-submit" id="sendBtn" aria-label="Search"><i class="fas fa-arrow-right"></i></button>
+                <div class="suggest-box d-none" id="suggestBox" role="listbox" aria-label="Suggestions"></div>
+            </form>
+
+            <div class="mode-tabs" role="tablist" aria-label="Search mode">
+                <button type="button" class="mode-tab" role="tab" id="tab-app" data-mode="app" aria-selected="true">
+                    <span class="mode-tab-title"><i class="fas fa-compass"></i> Application Search</span>
+                    <span class="mode-tab-desc">Explore SeedLive App</span>
+                </button>
+                <button type="button" class="mode-tab" role="tab" id="tab-report" data-mode="report" aria-selected="false" tabindex="-1">
+                    <span class="mode-tab-title"><i class="fas fa-wand-magic-sparkles"></i> Report Search</span>
+                    <span class="mode-tab-desc">Explore SeedLive Reports</span>
+                </button>
+            </div>
+
+            <!-- Report Search tools: filters, recent questions, new conversation, AI provider info -->
+            <div class="report-tools">
+                <div class="tools-row">
+                    <button type="button" class="btn btn-sm tool-btn" data-bs-toggle="collapse" data-bs-target="#filtersBox"
+                            aria-expanded="false" aria-controls="filtersBox"><i class="fas fa-sliders"></i> Filters</button>
+                    <button type="button" class="btn btn-sm tool-btn" id="historyToggle" onclick="toggleHistory()"
+                            aria-expanded="true" aria-controls="historyPanel"><i class="fas fa-clock-rotate-left"></i> Recent questions</button>
+                    <button type="button" class="btn btn-sm tool-btn new-chat-btn" onclick="clearConversation()"><i class="fas fa-plus"></i> New conversation</button>
+                    <span class="chat-status" id="chatStatus" role="status"></span>
+                    <span class="ai-info" id="aiModelInfo"></span>
+                </div>
+                <div class="collapse" id="filtersBox">
+                    <div class="filters-card">
+                        <div class="row g-2 align-items-end small">
+                            <div class="col-sm-3">
+                                <label class="form-label mb-0" for="filterFrom">Date from</label>
+                                <input type="date" class="form-control form-control-sm" id="filterFrom">
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="form-label mb-0" for="filterTo">Date to</label>
+                                <input type="date" class="form-control form-control-sm" id="filterTo">
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="form-label mb-0" for="filterStatus">Transaction status</label>
+                                <select class="form-select form-select-sm" id="filterStatus">
+                                    <option value="">All statuses</option>
+                                    <option>APPROVED</option>
+                                    <option>DECLINED</option>
+                                    <option>FAILED</option>
+                                    <option>REFUNDED</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <button type="button" class="btn btn-sm btn-outline-secondary w-100" onclick="resetFilters()">
+                                    <i class="fas fa-filter-circle-xmark"></i> Reset filters
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-text">Filters apply to new questions, instant reports and each report's <em>Apply filters</em> button. Dates use the transaction, settlement or event date; status applies to payment transactions.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Search: recent questions, example questions and the AI conversation (chat.js) -->
+        <section class="report-panel" id="reportPanel">
+            <div class="history-panel" id="historyPanel" aria-labelledby="historyTitle">
+                <div class="history-panel-header">
+                    <div class="section-label mb-0" id="historyTitle"><i class="fas fa-clock-rotate-left"></i> Recent questions</div>
+                    <button type="button" class="btn btn-sm history-action ms-auto" onclick="loadHistory()" title="Refresh" aria-label="Refresh recent questions"><i class="fas fa-rotate"></i></button>
+                    <button type="button" class="btn btn-sm history-action" onclick="showHistory(false)" title="Hide recent questions" aria-label="Hide recent questions"><i class="fas fa-xmark"></i></button>
+                </div>
+                <div class="list-group list-group-flush history-list" id="historyList">
+                    <div class="p-3 small text-muted">Loading...</div>
+                </div>
+            </div>
+            <div class="try-asking" id="welcome">
+                <div class="section-label"><i class="fas fa-wand-magic-sparkles"></i> Ask AI for a custom report</div>
+                <div class="report-chips">
+                    <button type="button" class="chip chip-ghost example-q">Generate a fees report for last month</button>
+                    <button type="button" class="chip chip-ghost example-q">Show failed transactions from the last 30 days grouped by location</button>
+                    <button type="button" class="chip chip-ghost example-q">Show the total transaction amount by location</button>
+                    <button type="button" class="chip chip-ghost example-q">Which devices have not communicated in the last 24 hours?</button>
+                </div>
+                <div class="small text-muted mt-2">Answers use real database records, limited to the data your account is allowed to see.</div>
+            </div>
+            <div class="chat-thread" id="chatMessages" aria-live="polite"></div>
+        </section>
+
+        <!-- Application Search results -->
+        <section class="results-view d-none" id="resultsView" aria-live="polite">
+            <div class="results-meta" id="resultsMeta"></div>
+            <div id="resultsBody"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="/sltalk/static/js/chat.js"></script>
+    <script src="/sltalk/static/js/search.js"></script>
+</body>
+</html>

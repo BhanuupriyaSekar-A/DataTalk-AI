@@ -1,40 +1,37 @@
-<!-- Main navigation shared by all signed-in pages. Global Search (navbar.js) reads its menu items from here. -->
-<nav th:fragment="navbar(active)" class="navbar navbar-expand-lg navbar-dark bg-primary">
+<!-- Minimal header shared by all signed-in pages. Pages and records are reached through the Home search (search.js). -->
+<nav th:fragment="navbar(active)" class="navbar navbar-dark app-header">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/datatalk/dashboard"><i class="fas fa-brain"></i> DataTalk AI
-            <small th:if="${active == 'chat'}" class="fw-light opacity-75" style="font-size:.7rem">Built by Vijay</small></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" th:classappend="${active == 'dashboard'} ? 'active'" href="/datatalk/dashboard"
-                       data-icon="fa-gauge" data-search-keys="home overview summary main">Dashboard</a></li>
-                <li class="nav-item"><a class="nav-link" th:classappend="${active == 'chat'} ? 'active'" href="/datatalk/chat"
-                       data-icon="fa-comments" data-search-keys="ai ask question assistant reports report">AI Chat</a></li>
-                <li class="nav-item d-none" id="customersNav" data-role="ADMIN"><a class="nav-link" th:classappend="${active == 'customers'} ? 'active'" href="/datatalk/customers"
-                       data-icon="fa-building" data-search-keys="customer clients client merchants merchant">Customers</a></li>
-                <li class="nav-item"><a class="nav-link" th:classappend="${active == 'devices'} ? 'active'" href="/datatalk/devices"
-                       data-icon="fa-cash-register" data-search-keys="device terminals terminal pos readers reader atm">Devices</a></li>
-                <li class="nav-item"><a class="nav-link" th:classappend="${active == 'transactions'} ? 'active'" href="/datatalk/transactions"
-                       data-icon="fa-receipt" data-search-keys="transaction payments payment sales txn">Transactions</a></li>
-                <li class="nav-item"><a class="nav-link" th:classappend="${active == 'locations'} ? 'active'" href="/datatalk/locations"
-                       data-icon="fa-location-dot" data-search-keys="location branches branch stores store sites site">Locations</a></li>
-                <li class="nav-item d-none" id="analyticsNav" data-role="ADMIN"><a class="nav-link" th:classappend="${active == 'analytics'} ? 'active'" href="/datatalk/analytics"
-                       data-icon="fa-chart-line" data-search-keys="query usage statistics stats">Analytics</a></li>
-                <li class="nav-item"><a class="nav-link" href="/datatalk/poc-info"
-                       data-icon="fa-circle-info" data-search-keys="project about poc information help">Project Info</a></li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user"></i> <span id="userDisplay">User</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><span class="dropdown-item-text small text-muted" id="userRole"></span></li>
-                        <li><a class="dropdown-item" href="#" onclick="logout()">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+        <a class="navbar-brand brand" href="/sltalk/home" title="Home">
+            <img src="/sltalk/static/img/logo.svg" alt="" class="brand-logo" width="32" height="32">
+            <span class="brand-text">SL Talk<span class="brand-ai">AI</span></span>
+        </a>
+        <div class="d-flex align-items-center gap-2 ms-auto">
+            <a class="btn btn-sm header-btn" href="/sltalk/home"
+               th:unless="${active == 'home'}" title="Search">
+                <i class="fas fa-magnifying-glass"></i><span class="d-none d-sm-inline ms-1">Search</span>
+            </a>
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle user-chip" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="user-avatar" id="userAvatar" aria-hidden="true"><i class="fas fa-user"></i></span>
+                    <span class="user-meta d-none d-md-flex">
+                        <span class="user-name" id="userDisplay">User</span>
+                        <span class="user-role" id="userRoleLabel"></span>
+                    </span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end user-menu" aria-labelledby="userDropdown">
+                    <li class="dropdown-item-text">
+                        <div class="fw-semibold" id="userMenuName"></div>
+                        <div class="small text-muted" id="userRole"></div>
+                        <div class="small text-muted" id="userOrg"></div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/sltalk/home"><i class="fas fa-house me-2"></i>Home</a></li>
+                    <li><a class="dropdown-item" href="/sltalk/poc-info"><i class="fas fa-circle-info me-2"></i>Project Info</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="logout(); return false;"><i class="fas fa-right-from-bracket me-2"></i>Logout</a></li>
+                </ul>
+            </div>
         </div>
     </div>
-    <script src="/datatalk/static/js/navbar.js" defer></script>
+    <script src="/sltalk/static/js/navbar.js" defer></script>
 </nav>

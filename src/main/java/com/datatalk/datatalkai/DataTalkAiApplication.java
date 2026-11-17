@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * DataTalk AI - Natural Language Business Data Analytics
+ * SL Talk AI - Natural Language Business Data Analytics
  * POC Phase 1: Database Setup, Login, and Basic Dashboard
  */
 @SpringBootApplication

@@ -1,4 +1,4 @@
-# DataTalk AI – Business and Technical Requirements
+# SL Talk AI – Business and Technical Requirements
 
 **AI-Powered Natural-Language Database Reporting**
 
@@ -7,7 +7,7 @@
 | Document type | Business and technical requirements proposal |
 | Intended audience | Company AI/ML team, solution architects, development team, business stakeholders |
 | Status | Draft for evaluation |
-| Prepared by | Vijay (independent proof of concept author) – Built by Vijay \| DataTalk AI |
+| Prepared by | Vijay (independent proof of concept author) – Built by Vijay \| SL Talk AI |
 
 > **How to read this document**
 > This document describes **what** the company needs and **what the expected solution must deliver**.
@@ -19,7 +19,7 @@
 ## 1. Project Introduction
 
 ### 1.1 Project name
-**DataTalk AI** – AI-powered natural-language database reporting.
+**SL Talk AI** – AI-powered natural-language database reporting.
 
 ### 1.2 Business objective
 Enable authorised business users to obtain accurate, permission-controlled reports from company databases by asking questions in plain English, without writing SQL or raising a request to a technical team.

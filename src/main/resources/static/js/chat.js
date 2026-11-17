@@ -1,6 +1,8 @@
-﻿/* DataTalk AI - chat page. All data comes from the backend APIs; nothing is faked. */
-const API = '/datatalk/api';
+/* SL Talk AI - AI report chat used by Home > Report Search. All data comes from the backend APIs; nothing is faked.
+   The question input is the Home search bar (search.js sends questions here through window.SLTalkChat). */
+const API = '/sltalk/api';
 const charts = {};
+let chatBusy = false;
 
 // ---------- helpers ----------
 function esc(v) {
@@ -10,7 +12,7 @@ function esc(v) {
 async function api(path, options = {}) {
     const res = await fetch(API + path, {headers: {'Content-Type': 'application/json'}, ...options});
     if (res.status === 401) {
-        window.location.href = '/datatalk/login';
+        window.location.href = '/sltalk/login';
         throw new Error('Session expired');
     }
     let body = null;
@@ -41,8 +43,12 @@ function resetFilters() {
 }
 
 function scrollBottom() {
-    const box = document.getElementById('chatMessages');
-    box.scrollTop = box.scrollHeight;
+    window.scrollTo({top: document.documentElement.scrollHeight, behavior: 'smooth'});
+}
+
+function setChatStarted(started) {
+    const app = document.getElementById('searchApp');
+    if (app) app.classList.toggle('has-chat', started);
 }
 
 function formatCell(v, type) {
@@ -58,11 +64,23 @@ function formatCell(v, type) {
 
 // ---------- rendering ----------
 function addUserMessage(text) {
+    setChatStarted(true);
     const div = document.createElement('div');
     div.className = 'msg-user p-2 px-3 mb-3';
     div.textContent = text;
     document.getElementById('chatMessages').appendChild(div);
     scrollBottom();
+}
+
+/** Existing instant reports that match the question, offered next to the AI answer (one click, no AI call). */
+function addRelatedReports(related) {
+    if (!related || !related.length) return;
+    const div = document.createElement('div');
+    div.className = 'related-reports mb-3';
+    div.innerHTML = '<span class="small text-muted me-1"><i class="fas fa-bolt"></i> Matching instant reports:</span>'
+        + related.map(r => `<button type="button" class="chip" data-id="${esc(r.id)}" data-name="${esc(r.name)}">${esc(r.name)}</button>`).join('');
+    div.querySelectorAll('[data-id]').forEach(b => b.addEventListener('click', () => runReport(b.dataset.id, b.dataset.name)));
+    document.getElementById('chatMessages').appendChild(div);
 }
 
 function addLoading() {
@@ -75,15 +93,10 @@ function addLoading() {
     return div;
 }
 
-function sqlDetails(sql) {
-    if (!sql) return '';
-    return `<details class="mt-2"><summary class="small text-muted">SQL details</summary><pre class="sql mt-2 mb-0">${esc(sql)}</pre></details>`;
-}
-
 /** Which AI provider/model produced this answer (or CACHE / PREDEFINED when no AI call was made). */
 function modelBadge(r) {
     if (r.source === 'CACHE') return '<span class="badge bg-secondary"><i class="fas fa-database"></i> Cached SQL - no AI call</span>';
-    if (r.source === 'PREDEFINED') return '<span class="badge bg-secondary"><i class="fas fa-book"></i> Predefined report - no AI call</span>';
+    if (r.source === 'PREDEFINED') return '<span class="badge bg-secondary"><i class="fas fa-bolt"></i> Instant report - no AI call</span>';
     if (!r.aiProvider || r.aiProvider === 'none') return '';
     const fallback = r.aiFailures && r.aiFailures.length;
     const title = fallback ? 'Fallback used. Failed first: ' + r.aiFailures.join(' | ') : 'Primary AI provider';
@@ -97,12 +110,13 @@ async function loadAiInfo() {
         const body = await api('/chat/ai-info');
         const active = body.data.filter(p => p.configured);
         if (!active.length) {
-            box.innerHTML = '<i class="fas fa-triangle-exclamation"></i> No AI provider configured (set NVIDIA_API_KEY / GEMINI_API_KEY)';
+            box.innerHTML = '<i class="fas fa-triangle-exclamation"></i> No AI provider configured';
             return;
         }
-        box.innerHTML = '<i class="fas fa-microchip"></i> AI: ' + active.map((p, i) =>
-            `<span class="badge ${i === 0 ? 'bg-light text-dark' : 'bg-primary border border-light'}" title="${esc(p.role)}">`
-            + `${i === 0 ? 'Primary' : 'Fallback ' + i}: ${esc(p.provider)} / ${esc(p.model)}</span>`).join(' ');
+        const primary = active[0];
+        box.title = active.map((p, i) => (i === 0 ? 'Primary' : 'Fallback ' + i) + ': ' + p.provider + ' / ' + p.model).join('\n');
+        box.innerHTML = `<i class="fas fa-microchip"></i> AI: ${esc(primary.provider)} / ${esc(primary.model)}`
+            + (active.length > 1 ? ` <span class="text-muted">+${active.length - 1} fallback</span>` : '');
     } catch (e) {
         box.textContent = 'AI model info unavailable';
     }
@@ -114,8 +128,7 @@ function renderAnswer(container, r) {
         const icon = r.status === 'NOT_ANSWERABLE' ? 'fa-circle-question' : 'fa-triangle-exclamation';
         container.innerHTML = `<div class="alert ${cls} mb-0"><i class="fas ${icon}"></i> <strong>${esc(r.status.replace('_', ' '))}</strong><br>${esc(r.message)}`
             + (r.understanding ? `<div class="small mt-1 text-muted">Understood as: ${esc(r.understanding)}</div>` : '')
-            + `<div class="mt-1">${modelBadge(r)}</div>`
-            + sqlDetails(r.sql) + '</div>';
+            + `<div class="mt-1">${modelBadge(r)}</div></div>`;
         return;
     }
     const id = r.chatId;
@@ -137,8 +150,7 @@ function renderAnswer(container, r) {
         <div class="small text-muted mt-1" id="meta-${id}"></div>
         <div class="chart-box mt-2 ${r.chartType === 'table' ? 'd-none' : ''}" id="chartwrap-${id}"><canvas id="chart-${id}"></canvas></div>
         <div class="table-responsive mt-2" id="table-${id}"></div>
-        <div id="pager-${id}"></div>
-        ${sqlDetails(r.sql)}`;
+        <div id="pager-${id}"></div>`;
     container.dataset.chartType = r.chartType;
     container.dataset.source = r.source;
     container.dataset.duration = r.durationMs;
@@ -149,7 +161,7 @@ function renderPage(container, page) {
     const id = container.dataset.chatId;
     const meta = document.getElementById('meta-' + id);
     const source = container.dataset.source === 'CACHE' ? 'reused earlier SQL (no AI call)'
-        : container.dataset.source === 'PREDEFINED' ? 'predefined report' : 'AI generated';
+        : container.dataset.source === 'PREDEFINED' ? 'instant report' : 'AI generated';
     meta.textContent = `${page.totalRows.toLocaleString()} row(s) - ${source}` + (container.dataset.duration ? ` - ${container.dataset.duration} ms` : '');
 
     const table = document.getElementById('table-' + id);
@@ -226,8 +238,10 @@ function renderChart(container, page) {
 }
 
 // ---------- actions ----------
-async function ask(question) {
+async function ask(question, related) {
+    if (chatBusy) return;
     addUserMessage(question);
+    addRelatedReports(related);
     const loading = addLoading();
     setBusy(true);
     try {
@@ -238,12 +252,13 @@ async function ask(question) {
         loading.innerHTML = `<div class="alert alert-danger mb-0"><i class="fas fa-circle-xmark"></i> ${esc(e.message)}</div>`;
     } finally {
         setBusy(false);
-        scrollBottom();
+        loading.scrollIntoView({behavior: 'smooth', block: 'start'});
         loadHistory();
     }
 }
 
 async function runReport(reportId, name) {
+    if (chatBusy) return;
     addUserMessage('Run report: ' + name);
     const loading = addLoading();
     setBusy(true);
@@ -254,7 +269,7 @@ async function runReport(reportId, name) {
         loading.innerHTML = `<div class="alert alert-danger mb-0"><i class="fas fa-circle-xmark"></i> ${esc(e.message)}</div>`;
     } finally {
         setBusy(false);
-        scrollBottom();
+        loading.scrollIntoView({behavior: 'smooth', block: 'start'});
         loadHistory();
     }
 }
@@ -288,7 +303,7 @@ async function exportReport(chatId, format, btn) {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
     try {
         const res = await fetch(`${API}/chat/${chatId}/export?format=${format}&${q}`);
-        if (res.status === 401) { window.location.href = '/datatalk/login'; return; }
+        if (res.status === 401) { window.location.href = '/sltalk/login'; return; }
         if (res.status === 202) {
             const body = await res.json();
             btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> ${body.data.rows.toLocaleString()} rows...`;
@@ -331,45 +346,42 @@ async function pollExport(jobId) {
 }
 
 async function clearConversation() {
-    if (!confirm('Start a new conversation? The current messages will be cleared from the screen (history is kept).')) return;
+    if (chatBusy) return;
+    if (document.querySelector('#chatMessages > *')
+        && !confirm('Start a new conversation? The current messages will be cleared from the screen (history is kept).')) return;
     try {
         await api('/chat/conversation/new', {method: 'POST'});
         Object.values(charts).forEach(c => c.destroy());
-        const box = document.getElementById('chatMessages');
-        const welcome = document.getElementById('welcome');
-        box.innerHTML = '';
-        box.appendChild(welcome);
+        Object.keys(charts).forEach(k => delete charts[k]);
+        document.getElementById('chatMessages').innerHTML = '';
+        setChatStarted(false);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        document.getElementById('searchInput').focus();
     } catch (e) {
         alert(e.message);
     }
 }
 
 function setBusy(busy) {
-    document.getElementById('sendBtn').disabled = busy;
+    chatBusy = busy;
     document.getElementById('micBtn').disabled = busy;
-    document.getElementById('questionInput').disabled = busy;
-    document.getElementById('loadingText').textContent = busy ? 'Working on your report...' : '';
+    document.getElementById('searchApp').classList.toggle('chat-busy', busy);
+    document.getElementById('chatStatus').textContent = busy ? 'Working on your report...' : '';
 }
 
-// ---------- sidebar ----------
-async function loadReports() {
-    const list = document.getElementById('reportList');
-    try {
-        const body = await api('/reports');
-        if (!body.data.length) {
-            list.innerHTML = '<div class="p-3 small text-muted">No reports available for your role.</div>';
-            return;
-        }
-        const groups = {};
-        body.data.forEach(r => (groups[r.category] = groups[r.category] || []).push(r));
-        list.innerHTML = Object.entries(groups).map(([cat, reports]) =>
-            `<div class="px-3 pt-2 small fw-bold text-uppercase text-muted">${esc(cat)}</div><div class="list-group list-group-flush">`
-            + reports.map(r => `<a class="list-group-item list-group-item-action" data-id="${esc(r.id)}" data-name="${esc(r.name)}" title="${esc(r.description)}">${esc(r.name)}</a>`).join('')
-            + '</div>').join('');
-        list.querySelectorAll('[data-id]').forEach(a => a.addEventListener('click', () => runReport(a.dataset.id, a.dataset.name)));
-    } catch (e) {
-        list.innerHTML = `<div class="p-3 small text-danger">${esc(e.message)}</div>`;
-    }
+// ---------- instant reports (used for matching-report suggestions and Application Search) ----------
+const reportsPromise = api('/reports').then(b => b.data);
+
+// ---------- recent questions ----------
+function showHistory(show) {
+    const panel = document.getElementById('historyPanel');
+    panel.classList.toggle('d-none', !show);
+    document.getElementById('searchApp').classList.toggle('history-open', show);
+    document.getElementById('historyToggle').setAttribute('aria-expanded', String(show));
+}
+
+function toggleHistory() {
+    showHistory(document.getElementById('historyPanel').classList.contains('d-none'));
 }
 
 async function loadHistory() {
@@ -382,24 +394,21 @@ async function loadHistory() {
         }
         list.innerHTML = body.data.map(h => {
             const ok = h.queryStatus === 'EXECUTED';
-            return `<a class="list-group-item list-group-item-action history-item" data-q="${esc(h.question)}">
+            return `<a href="#" class="list-group-item list-group-item-action history-item" data-q="${esc(h.question)}">
                 <i class="fas ${ok ? 'fa-circle-check text-success' : 'fa-circle-exclamation text-warning'}"></i>
                 ${esc(h.question.length > 70 ? h.question.substring(0, 70) + '...' : h.question)}
-                <div class="text-muted">${esc((h.createdAt || '').replace('T', ' ').substring(0, 16))}${ok && h.rowCount !== null ? ' - ' + h.rowCount + ' rows' : ''}${h.aiProvider ? ' - ' + esc(h.aiProvider) : ''}</div></a>`;
+                <div class="text-muted">${esc((h.createdAt || '').replace('T', ' ').substring(0, 16))}${ok && h.rowCount !== null ? ' - ' + h.rowCount + ' rows' : ''}${h.aiProvider ? ' - ' + esc(h.aiProvider === 'PREDEFINED' ? 'Instant report' : h.aiProvider) : ''}</div></a>`;
         }).join('');
-        list.querySelectorAll('[data-q]').forEach(a => a.addEventListener('click', () => {
-            const input = document.getElementById('questionInput');
+        list.querySelectorAll('[data-q]').forEach(a => a.addEventListener('click', ev => {
+            ev.preventDefault();
+            const input = document.getElementById('searchInput');
             input.value = a.dataset.q;
+            input.dispatchEvent(new Event('input'));
             input.focus();
-            updateCount();
         }));
     } catch (e) {
         list.innerHTML = `<div class="p-3 small text-danger">${esc(e.message)}</div>`;
     }
-}
-
-function updateCount() {
-    document.getElementById('charCount').textContent = document.getElementById('questionInput').value.length;
 }
 
 // ---------- voice input (browser Web Speech API) ----------
@@ -418,22 +427,21 @@ const VOICE_ERRORS = {
 function setMicState(on) {
     listening = on;
     const btn = document.getElementById('micBtn');
-    btn.classList.toggle('btn-danger', on);
-    btn.classList.toggle('btn-outline-secondary', !on);
+    btn.classList.toggle('is-listening', on);
     btn.innerHTML = on ? '<i class="fas fa-stop fa-beat"></i>' : '<i class="fas fa-microphone"></i>';
     btn.title = on ? 'Stop listening' : 'Voice input';
 }
 
 function initVoice() {
     const btn = document.getElementById('micBtn');
-    const status = document.getElementById('loadingText');
+    const status = document.getElementById('chatStatus');
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
         btn.title = 'Voice input is not supported in this browser';
         btn.addEventListener('click', () => status.textContent = 'Voice input is not supported in this browser. Try Chrome or Edge.');
         return;
     }
-    const input = document.getElementById('questionInput');
+    const input = document.getElementById('searchInput');
     let base = '', error = '';
     recognition = new SR();
     recognition.lang = navigator.language || 'en-US';
@@ -448,14 +456,14 @@ function initVoice() {
     recognition.onresult = ev => {
         const text = Array.from(ev.results).map(r => r[0].transcript).join('').trim();
         input.value = ((base ? base + ' ' : '') + text).substring(0, input.maxLength);
-        updateCount();
+        input.dispatchEvent(new Event('input'));
     };
     recognition.onerror = ev => error = ev.error in VOICE_ERRORS ? VOICE_ERRORS[ev.error] : 'Voice input error: ' + ev.error;
     recognition.onend = () => {
         setMicState(false);
         if (error) status.textContent = error;
         else if (status.textContent === LISTENING_MSG) status.textContent = '';
-        if (!input.disabled) input.focus();
+        input.focus();
     };
     btn.addEventListener('click', () => {
         if (listening) recognition.stop();
@@ -463,52 +471,20 @@ function initVoice() {
     });
 }
 
-async function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        try { await fetch(API + '/logout', {method: 'POST'}); } finally { window.location.href = '/datatalk/login?logout=true'; }
-    }
-}
-
-// ---------- init ----------
-window.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const body = await api('/user-info');
-        document.getElementById('userDisplay').textContent = body.data.username;
-        document.getElementById('userRole').textContent = body.data.role + (body.data.customerName ? ' - ' + body.data.customerName : '');
-        if (body.data.role === 'ADMIN') document.getElementById('analyticsNav').classList.remove('d-none');
-    } catch (e) {
-        window.location.href = '/datatalk/login';
-        return;
-    }
-    const input = document.getElementById('questionInput');
-    document.getElementById('askForm').addEventListener('submit', ev => {
-        ev.preventDefault();
-        const q = input.value.trim();
-        if (!q) return;
+// ---------- API for search.js ----------
+window.SLTalkChat = {
+    ask(question, related) {
         if (listening) recognition.abort();
-        input.value = '';
-        updateCount();
-        ask(q);
-    });
-    input.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter' && !ev.shiftKey) {
-            ev.preventDefault();
-            document.getElementById('askForm').requestSubmit();
-        }
-    });
-    input.addEventListener('input', updateCount);
-    document.querySelectorAll('.example-q').forEach(a => a.addEventListener('click', ev => {
-        ev.preventDefault();
-        ask(a.textContent);
-    }));
-    // Opened from Global Search: run that predefined report (no AI call)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('report')) {
-        history.replaceState(null, '', window.location.pathname);
-        runReport(params.get('report'), params.get('name') || params.get('report'));
-    }
+        return ask(question, related);
+    },
+    runReport,
+    showHistory,
+    reports: reportsPromise,
+    isBusy: () => chatBusy
+};
+
+window.addEventListener('DOMContentLoaded', () => {
     initVoice();
     loadAiInfo();
-    loadReports();
     loadHistory();
 });

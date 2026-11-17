@@ -1,4 +1,4 @@
-# DataTalk AI POC – Implementation Details
+# SL Talk AI POC – Implementation Details
 
 These are technical notes about the code as it is now. Everything below comes from reading the source in `src/main/java/com/datatalk/datatalkai/**`, `application.properties`, the templates, `static/js/chat.js`, `database/*.sql` and `src/test/**`. Nothing was confirmed by running the application.
 
@@ -33,7 +33,7 @@ The application is a single Spring Boot application (`DataTalkAiApplication`). S
 
 ```mermaid
 flowchart TD
-    U[User types question in chat.html] -->|POST /datatalk/api/chat/ask| C[ChatApiController.ask]
+    U[User types question in chat.html] -->|POST /sltalk/api/chat/ask| C[ChatApiController.ask]
     C --> AP[AccessPolicyService.resolve<br/>re-reads user from DB -> UserScope]
     AP --> CS[ChatService.ask]
     CS --> V0{Empty or > 1000 chars?}
@@ -86,7 +86,7 @@ flowchart TD
 
 ## 3. Login and authentication flow
 
-1. **Login page.** `login.html` sends `POST /datatalk/api/login` with JSON `{username, password}`. On success it redirects to `/datatalk/dashboard`.
+1. **Login page.** `login.html` sends `POST /sltalk/api/login` with JSON `{username, password}`. On success it redirects to `/sltalk/home` (central Application / Report search).
 2. **Input check.** `AuthApiController.login` returns 400 `INVALID_USERNAME` or `INVALID_PASSWORD` when a field is empty.
 3. **Authentication.** `AuthenticationService.authenticate`:
    - Looks up the user with `UserRepository.findByUsername`, which only returns users with `status = 'ACTIVE'`.
@@ -128,7 +128,7 @@ flowchart TD
 | `/analytics`, `/api/admin/**` | `hasRole("ADMIN")` |
 | everything else | authenticated |
 
-`PageController` also redirects to `/login` when there is no `userId` in the session, and redirects non-admins on `/analytics` to `/dashboard`. `AnalyticsApiController` checks again that `scope.isAdmin()` is true and otherwise returns 403 `ADMIN_ONLY`.
+`PageController` also redirects to `/login` when there is no `userId` in the session, and redirects non-admins on `/analytics` to `/home`. `AnalyticsApiController` checks again that `scope.isAdmin()` is true and otherwise returns 403 `ADMIN_ONLY`.
 
 ### 4.2 AccessPolicyService → UserScope
 
@@ -458,7 +458,7 @@ There are 11 SQL files under `src/main/resources/predefined-reports/{category}/`
 | Row cap | `app.export.max-rows` = 50,000, applied as a `LIMIT` on the streamed query. |
 | Direct vs background | The row count is computed first. When `async=true` **or** rows > `app.export.async-threshold-rows` (**2000**), a background job starts and the API returns **202** with `{jobId, status, rows}`. Otherwise the file streams directly with `Content-Disposition: attachment`. |
 | Executor | `Executors.newFixedThreadPool(2)` inside `ExportJobService`. It is in-memory and single-instance, and it is shut down on `@PreDestroy`. |
-| Files | Written to `app.export.directory` = `${EXPORT_DIR:${java.io.tmpdir}/datatalk-exports}` as `<jobId>.<pdf\|xlsx>`. The download name is `<title-slug>-<date>.<ext>`. |
+| Files | Written to `app.export.directory` = `${EXPORT_DIR:${java.io.tmpdir}/sltalk-exports}` as `<jobId>.<pdf\|xlsx>`. The download name is `<title-slug>-<date>.<ext>`. |
 | Retention | 1 hour. Cleanup is **lazy**: it runs only when a new background job is submitted. Jobs older than 1 hour are removed from memory, their files are deleted and they are marked `EXPIRED` in the DB. |
 | Polling (UI) | `chat.js` polls `GET /api/exports/{jobId}` every 2 s, up to 300 times (about 10 minutes). On `COMPLETED` it navigates to `/api/exports/{jobId}/download`. |
 | Status and download ownership | `ExportJobService.get(jobId, userId)` checks memory first, then `app.export_job` filtered by `user_id`. A job that is missing or belongs to someone else returns 404 `EXPORT_NOT_FOUND`. A download that is not ready or whose file is missing returns 409 `EXPORT_NOT_READY`. |
@@ -493,7 +493,7 @@ There are 11 SQL files under `src/main/resources/predefined-reports/{category}/`
 
 ## 12. API endpoints
 
-The context path is **`/datatalk`**, so all paths below are prefixed with it. The default port is **8081**. JSON APIs return `ApiResponse` (`success`, `data`, `message`, `error`…).
+The context path is **`/sltalk`**, so all paths below are prefixed with it. The default port is **8081**. JSON APIs return `ApiResponse` (`success`, `data`, `message`, `error`…).
 
 | Method | Path | Purpose | Auth / role |
 |---|---|---|---|
@@ -575,8 +575,8 @@ mvn spring-boot:run
 # or: mvn clean package ; java -jar target\datatalk-ai-poc-0.1.0.jar
 ```
 
-- **URL:** `http://localhost:8081/datatalk/login`. The port comes from `server.port=8081` and the context path from `server.servlet.context-path=/datatalk`.
-- **Logs:** `logs/datatalk-ai.log` (10 MB × 10 files). Logging is at DEBUG for `com.datatalk.datatalkai` and Spring Security.
+- **URL:** `http://localhost:8081/sltalk/login`. The port comes from `server.port=8081` and the context path from `server.servlet.context-path=/sltalk`.
+- **Logs:** `logs/sltalk-ai.log` (10 MB × 10 files). Logging is at DEBUG for `com.datatalk.datatalkai` and Spring Security.
 - **Demo users:** see `docs/DEMO_USERS_GUIDE.md`. Passwords are not repeated here.
 
 ---

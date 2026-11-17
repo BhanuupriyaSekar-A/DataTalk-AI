@@ -1,0 +1,223 @@
+================================================================================
+DataTalk AI - QUICK SETUP CHECKLIST FOR YOUR MANAGER
+================================================================================
+
+Share this list with your manager - they need to install these exact versions:
+
+================================================================================
+MANDATORY INSTALLATIONS (Must Have)
+================================================================================
+
+1. JAVA 17 or LATER
+   ✓ Minimum: Java 17
+   ✓ Recommended: Java 17, 18, 19, 20, 21, or later
+   ✓ Download: https://www.oracle.com/java/technologies/downloads/#java17
+   ✓ Verify: Open Command Prompt/Terminal and run: java -version
+   ✓ Should show: java version "17.x.x" (or higher)
+
+2. MAVEN 3.8.0 or LATER
+   ✓ Minimum: Maven 3.8.0
+   ✓ Recommended: Maven 3.8.1 to 3.9.x
+   ✓ Download: https://maven.apache.org/download.cgi
+   ✓ Verify: Open Command Prompt/Terminal and run: mvn -version
+   ✓ Should show: Apache Maven 3.8.x or higher
+
+3. GIT 2.0 or LATER
+   ✓ Minimum: Git 2.0
+   ✓ Recommended: Latest stable version
+   ✓ Download: https://git-scm.com/download/
+   ✓ Verify: Open Command Prompt/Terminal and run: git --version
+   ✓ Should show: git version 2.x.x or higher
+
+4. AI PROVIDER API KEY (At Least ONE)
+   Choose ONE of these free options:
+
+   A. GROQ (Recommended - Free tier) ⭐
+      ✓ Go to: https://console.groq.com
+      ✓ Sign up with email (completely FREE)
+      ✓ Click "API Keys" and create a new key
+      ✓ Copy the key (looks like: gsk_VTf1pCNep1AuyUgIW8TlWGdyb3FYRKKQ1gy9...)
+
+   B. GOOGLE GEMINI (Free tier)
+      ✓ Go to: https://ai.google.dev/
+      ✓ Click "Get API Key" (FREE with Google account)
+      ✓ Copy the API key
+
+   C. NVIDIA (Free tier)
+      ✓ Go to: https://build.nvidia.com/
+      ✓ Create NVIDIA account
+      ✓ Generate API key from "API Catalog"
+
+   D. OPENAI (Paid - requires credit card)
+      ✓ Go to: https://platform.openai.com/
+      ✓ Create account and add payment method
+      ✓ Generate API key from account settings
+
+5. DATABASE CREDENTIALS (Will be provided by you)
+   ✓ Connection String (Neon PostgreSQL)
+   ✓ Username
+   ✓ Password
+   → NO LOCAL DATABASE INSTALLATION NEEDED (uses cloud)
+
+================================================================================
+OPTIONAL INSTALLATIONS (Nice to Have)
+================================================================================
+
+6. NGROK (Only if public HTTPS URL needed for demos)
+   ✓ Download: https://ngrok.com/download
+   ✓ Sign up: https://dashboard.ngrok.com (FREE tier available)
+   ✓ Run: ngrok config add-authtoken <your-token>
+   → If you skip this, the app works fine locally only
+
+================================================================================
+AFTER INSTALLATION - QUICK START (5 minutes)
+================================================================================
+
+1. Clone the repository:
+   git clone https://github.com/BhanuupriyaSekar-A/DataTalk-AI.git
+   cd DataTalk-AI---POC
+
+2. Create .env file (copy this content):
+   ---
+   # Database (ask your manager for these values)
+   DB_URL=jdbc:postgresql://ep-lingering-brook-b3tgnze7-pooler.c-4.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require
+   DB_USER=user_datatalk
+   DB_PASSWORD=<ask-manager>
+
+   # AI Provider (use Groq key you got above)
+   AI_PROVIDER=groq
+   GROQ_API_KEY=<your-groq-api-key-here>
+
+   # Disable ngrok if not needed
+   NGROK_ENABLED=false
+   ---
+
+3. Build the application:
+   mvn clean install
+
+4. Run the application:
+   mvn spring-boot:run
+
+5. Open in browser:
+   http://localhost:8081/datatalk/login
+
+6. Login with demo credentials:
+   Username: admin_user
+   Password: DemoPass@123
+
+================================================================================
+VERSIONS SUMMARY TABLE
+================================================================================
+
+Component                    Required Version    Recommended        Notes
+─────────────────────────────────────────────────────────────────────────────
+Java JDK                     17+                 17 or 21           Must be 17 minimum
+Maven                        3.8.0+              3.9.x              Build tool
+Spring Boot                  3.2.0               3.2.0              (auto-downloaded)
+PostgreSQL Driver            42.7.4              42.7.4             (auto-downloaded)
+Git                          2.0+                Latest stable      For cloning repo
+
+📌 IMPORTANT: Spring Boot is NOT installed separately!
+   Spring Boot 3.2.0 is defined in pom.xml and Maven downloads it automatically
+   when you run: mvn clean install
+
+Maven Dependencies (auto-downloaded by Maven):
+  - Spring Boot Core          3.2.0               3.2.0              ⭐ AUTO-DOWNLOADED
+  - Spring Boot Web           3.2.0               3.2.0
+  - Spring Security           6.0+                (included)
+  - Spring JDBC               (included)          (included)
+  - Thymeleaf                 (included)          (included)
+  - Bootstrap                 5.3.0               5.3.0              (HTML framework)
+  - Chart.js                  4.4.1               4.4.1              (charting library)
+  - Jackson                   (included)          (included)
+  - PostgreSQL JDBC Driver    42.7.4              42.7.4
+  - OpenPDF                   1.3.43              1.3.43             (PDF export)
+  - Apache POI                5.2.5               5.2.5              (Excel export)
+  - JSqlParser                4.9                 4.9                (SQL validation)
+
+================================================================================
+TROUBLESHOOTING QUICK FIXES
+================================================================================
+
+Problem: "java: command not found" or Java version < 17
+Solution: 
+  - Download Java 17+ from https://www.oracle.com/java/technologies/downloads/#java17
+  - Restart Command Prompt after installation
+  - Run: java -version
+
+Problem: "mvn: command not found"
+Solution:
+  - Download Maven from https://maven.apache.org/download.cgi
+  - Unzip to a folder (e.g., C:\maven or /opt/maven)
+  - Add to system PATH
+  - Restart Command Prompt
+  - Run: mvn -version
+
+Problem: "No AI provider configured"
+Solution:
+  - Check .env file exists in project root
+  - Verify GROQ_API_KEY is filled (not empty)
+  - Restart the application
+
+Problem: Port 8081 already in use
+Solution:
+  - Run with different port: mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8091
+  - Then access at: http://localhost:8091/datatalk/login
+
+Problem: Database connection failed
+Solution:
+  - Verify DB_URL, DB_USER, DB_PASSWORD in .env are correct
+  - Check internet connection (Neon is cloud-based)
+
+================================================================================
+WHAT WORKS OUT-OF-THE-BOX
+================================================================================
+
+✅ Login with demo users
+✅ Ask questions in plain English
+✅ AI generates SQL queries automatically
+✅ View results as tables and charts
+✅ Export to PDF and Excel
+✅ Access 11 predefined business reports
+✅ Automatic AI provider fallback if one fails
+✅ View chat history and analytics (admin only)
+✅ Customer-level data isolation
+✅ Full role-based access control
+
+================================================================================
+TIMELINE FOR YOUR MANAGER
+================================================================================
+
+Download & Install Prerequisites:     ~20-30 minutes
+Clone repo & setup .env:              ~5 minutes
+Build with Maven:                     ~5-10 minutes (first time, downloads dependencies)
+Run the application:                  ~2 minutes
+Test login & features:                ~5 minutes
+
+TOTAL TIME: ~40-60 minutes (first time only)
+Next runs: Just run "mvn spring-boot:run" - takes 30 seconds to start!
+
+================================================================================
+QUESTIONS TO ASK YOUR MANAGER BEFORE THEY START
+================================================================================
+
+1. Do you have a Groq account & API key? (Or should I provide one?)
+2. Can you access the cloud database (Neon) from your network?
+3. Do you need a public HTTPS URL? (Then install ngrok)
+4. What's your preferred IDE? (IntelliJ IDEA recommended, but VS Code works too)
+5. Any firewall/proxy restrictions that might block external APIs?
+
+================================================================================
+DIRECT SUPPORT
+================================================================================
+
+If your manager runs into issues, they can:
+1. Check the detailed setup guide: docs/SETUP_PREREQUISITES.md
+2. Check troubleshooting: docs/POC_IMPLEMENTATION_DETAILS.md
+3. Review logs at: logs/datatalk-ai.log
+4. Contact: [Your contact info]
+
+================================================================================
+Last Updated: November 17, 2026
+Version: 1.0
+================================================================================

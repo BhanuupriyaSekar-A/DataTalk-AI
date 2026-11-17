@@ -1,7 +1,7 @@
-# DataTalk AI - Project Architecture & Flow Diagram
+# SL Talk AI - Project Architecture & Flow Diagram
 
 ## Overview
-DataTalk AI is a proof-of-concept natural-language reporting system. Users log in, ask business questions in plain English, and get database-backed reports. An AI model generates PostgreSQL SQL, the backend validates it, applies security restrictions, and runs it read-only. Results display as tables and charts, exportable to PDF or Excel.
+SL Talk AI is a proof-of-concept natural-language reporting system. Users log in, ask business questions in plain English, and get database-backed reports. An AI model generates PostgreSQL SQL, the backend validates it, applies security restrictions, and runs it read-only. Results display as tables and charts, exportable to PDF or Excel.
 
 **Status:** POC Complete ✅ (Phase 1: Foundation, Phase 2: AI Reporting, Phase 3: Export Jobs)
 
@@ -203,7 +203,7 @@ User Click Export (PDF/Excel)
 
 ### 5. Analytics Flow (Admin Only)
 ```
-Admin navigates to /datatalk/analytics
+Admin navigates to /sltalk/analytics
   → AnalyticsController
   → AnalyticsService
   → Query logs table
@@ -488,10 +488,10 @@ server.port=8081                        # default: 8081
 
 ### Default Settings (application.properties)
 - Server port: 8081
-- Context path: /datatalk
+- Context path: /sltalk
 - Session timeout: 30 minutes
 - Query timeout: 30 seconds
-- Log file: logs/datatalk-ai.log
+- Log file: logs/sltalk-ai.log
 
 ---
 
@@ -538,7 +538,7 @@ GROQ_API_KEY=...
 ```bash
 mvn spring-boot:run
 ```
-Visit: http://localhost:8081/datatalk/login
+Visit: http://localhost:8081/sltalk/login
 
 ### 4. Run Tests
 ```bash
@@ -637,7 +637,7 @@ mvn test  # 32 tests (requires database for integration tests)
 **Solution:** Set at least one `*_API_KEY` in `.env` or environment variables.
 
 ### Slow or failed AI answers
-**Solution:** The app automatically falls back to the next provider. Check `logs/datatalk-ai.log` for details.
+**Solution:** The app automatically falls back to the next provider. Check `logs/sltalk-ai.log` for details.
 
 ### "Export job persistence failed – run database/phase3-migration.sql"
 **Status:** Exports still work, but job metadata isn't stored until Phase 3 script runs.
@@ -660,20 +660,20 @@ mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8091
 ## API Endpoints
 
 ### Public (No Auth)
-- `GET /datatalk/login` - Login page
-- `POST /datatalk/login` - Submit login
+- `GET /sltalk/login` - Login page
+- `POST /sltalk/login` - Submit login
 
 ### Authenticated
-- `GET /datatalk/dashboard` - Main dashboard
-- `GET /datatalk/reports` - Predefined reports
-- `POST /datatalk/api/chat` - Submit question
-- `GET /datatalk/api/chat/{conversationId}` - Get chat history
-- `POST /datatalk/api/export` - Export results (PDF/Excel)
+- `GET /sltalk/dashboard` - Main dashboard
+- `GET /sltalk/reports` - Predefined reports
+- `POST /sltalk/api/chat` - Submit question
+- `GET /sltalk/api/chat/{conversationId}` - Get chat history
+- `POST /sltalk/api/export` - Export results (PDF/Excel)
 
 ### Admin Only
-- `GET /datatalk/analytics` - Query analytics page
-- `GET /datatalk/api/analytics/stats` - Analytics data
-- `POST /datatalk/admin/users` - User management
+- `GET /sltalk/analytics` - Query analytics page
+- `GET /sltalk/api/analytics/stats` - Analytics data
+- `POST /sltalk/admin/users` - User management
 
 ---
 
@@ -714,8 +714,8 @@ mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8091
 4. Run: `java -jar target/datatalk-ai-poc-0.1.0.jar`
 
 ### Monitoring
-- **Logs:** `logs/datatalk-ai.log`
-- **Metrics:** `/datatalk/analytics` (admin only)
+- **Logs:** `logs/sltalk-ai.log`
+- **Metrics:** `/sltalk/analytics` (admin only)
 - **Health check:** `GET /actuator/health` (Spring Boot)
 
 ---
@@ -750,7 +750,7 @@ This is a **POC (Proof of Concept)** that uses **synthetic demo data only**. It 
 
 ## Summary
 
-**DataTalk AI** demonstrates a modern, secure approach to natural-language data analytics:
+**SL Talk AI** demonstrates a modern, secure approach to natural-language data analytics:
 
 1. **AI-Powered Questions** → SQL generation with fallback providers
 2. **Security-First** → Role-based access, data isolation, read-only enforcement

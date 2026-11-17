@@ -3,41 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataTalk AI - Project Information</title>
+    <title>SL Talk AI - Project Information</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/datatalk/static/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="/sltalk/static/img/logo.svg">
+    <link rel="stylesheet" href="/sltalk/static/css/style.css">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-dark app-header">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/datatalk/dashboard">
-                <i class="fas fa-brain"></i> DataTalk AI
+            <a class="navbar-brand brand" href="/sltalk/home">
+                <img src="/sltalk/static/img/logo.svg" alt="" class="brand-logo" width="32" height="32">
+                <span class="brand-text">SL Talk<span class="brand-ai">AI</span></span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/datatalk/dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/datatalk/chat">AI Chat</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/datatalk/poc-info">Project Info</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> Menu
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="/datatalk/login">Login</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <a class="btn btn-sm header-btn" href="/sltalk/home"><i class="fas fa-magnifying-glass me-1"></i>Search</a>
+                <a class="btn btn-sm header-btn" href="/sltalk/login"><i class="fas fa-right-to-bracket me-1"></i>Login</a>
             </div>
         </div>
     </nav>
@@ -46,7 +28,7 @@
     <div class="container py-5">
         <div class="row mb-4">
             <div class="col-md-12">
-                <h1 class="display-5 fw-bold mb-2"><i class="fas fa-project-diagram text-primary"></i> DataTalk AI</h1>
+                <h1 class="display-5 fw-bold mb-2"><i class="fas fa-project-diagram text-primary"></i> SL Talk AI</h1>
                 <p class="lead text-muted mb-1">AI-powered natural-language database reporting &ndash; personal Proof of Concept</p>
                 <span class="badge bg-success">POC complete (Phases 1&ndash;3)</span>
                 <span class="badge bg-warning text-dark">1 pending DB step: phase3-migration.sql</span>
@@ -96,7 +78,7 @@
             <div class="col-md-6">
                 <ul class="list-unstyled">
                     <li><i class="fas fa-check-circle text-success"></i> Tables, charts, filters, pagination, explanations</li>
-                    <li><i class="fas fa-check-circle text-success"></i> 11 predefined reports (payments, devices, settlements, customers)</li>
+                    <li><i class="fas fa-check-circle text-success"></i> 11 instant reports (payments, devices, settlements, customers)</li>
                     <li><i class="fas fa-check-circle text-success"></i> Chat history and SQL cache for repeated questions</li>
                     <li><i class="fas fa-check-circle text-success"></i> PDF / Excel export with background jobs for large results</li>
                     <li><i class="fas fa-check-circle text-success"></i> Export job tracking in <code>app.export_job</code></li>
@@ -154,7 +136,7 @@
                 <h5 class="text-success"><i class="fas fa-check-circle"></i> Completed</h5>
                 <ul class="small">
                     <li><strong>Phase 1:</strong> database, sample data, login, roles, dashboard</li>
-                    <li><strong>Phase 2:</strong> AI natural-language reporting, validation, scoping, charts, history, predefined reports, export</li>
+                    <li><strong>Phase 2:</strong> AI natural-language reporting, validation, scoping, charts, history, instant reports, export</li>
                     <li><strong>Phase 3:</strong> export job persistence, Query Analytics, cleanup, documentation, company requirements proposal</li>
                     <li>Tests: 32 passing (validator, AI fallback, login/access)</li>
                 </ul>
@@ -192,7 +174,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="alert alert-light border text-center">
-                    <p class="mb-2"><strong>Built by Vijay | DataTalk AI &ndash; Personal POC</strong></p>
+                    <p class="mb-2"><strong>SL Talk AI &ndash; AI-powered reporting POC</strong></p>
                     <p class="small text-muted mb-0">Last Updated: November 4, 2026 | Version: 0.3.0</p>
                 </div>
             </div>

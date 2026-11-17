@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.servlet.http.HttpSession;
 
 /**
@@ -23,6 +25,15 @@ public class PageController {
     }
 
     /**
+     * Home page: central Application / Report search (the landing page after login).
+     * ?mode=app|report&q=... shows the search results view of the same page.
+     */
+    @GetMapping("/home")
+    public String home(HttpSession session) {
+        return session.getAttribute("userId") == null ? "redirect:/login" : "home";
+    }
+
+    /**
      * Dashboard page
      */
     @GetMapping("/dashboard")
@@ -35,15 +46,18 @@ public class PageController {
     }
 
     /**
-     * AI Chat page
+     * The former AI Chat page: AI chat now lives in the Home page's Report Search mode.
+     * Old links keep working (?report=id runs an instant report, ?ask=text prefills a question).
      */
     @GetMapping("/chat")
-    public String chat(HttpSession session) {
-        Integer userId = (Integer) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/login";
-        }
-        return "chat";
+    public String chat(@RequestParam(required = false) String report,
+                       @RequestParam(required = false) String name,
+                       @RequestParam(required = false) String ask) {
+        UriComponentsBuilder target = UriComponentsBuilder.fromPath("/home").queryParam("mode", "report");
+        if (report != null) target.queryParam("report", report);
+        if (name != null) target.queryParam("name", name);
+        if (ask != null) target.queryParam("ask", ask);
+        return "redirect:" + target.encode().build().toUriString();
     }
 
     /**
@@ -55,7 +69,7 @@ public class PageController {
             return "redirect:/login";
         }
         if (!"ADMIN".equals(session.getAttribute("role"))) {
-            return "redirect:/dashboard";
+            return "redirect:/home";
         }
         return "analytics";
     }
@@ -69,7 +83,7 @@ public class PageController {
             return "redirect:/login";
         }
         if (!"ADMIN".equals(session.getAttribute("role"))) {
-            return "redirect:/dashboard";
+            return "redirect:/home";
         }
         return recordPage(model, "customers", "Customers");
     }
@@ -107,10 +121,10 @@ public class PageController {
     }
 
     /**
-     * Root redirect
+     * Root redirect: signed-in users go to Home, others to the login page
      */
-    @GetMapping("")
-    public String root() {
-        return "redirect:/login";
+    @GetMapping({"", "/"})
+    public String root(HttpSession session) {
+        return session.getAttribute("userId") == null ? "redirect:/login" : "redirect:/home";
     }
 }

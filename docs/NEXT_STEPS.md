@@ -1,4 +1,4 @@
-# DataTalk AI – Next Steps
+# SL Talk AI – Next Steps
 
 **Last updated:** November 4, 2026
 

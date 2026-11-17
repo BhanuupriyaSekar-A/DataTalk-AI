@@ -1,4 +1,4 @@
-# DataTalk AI – POC Progress
+# SL Talk AI – POC Progress
 
 **Last updated:** November 4, 2026
 **Overall status:** POC functionally complete (Phases 1–3). One database step is pending: run `database/phase3-migration.sql` on Neon.
@@ -38,7 +38,7 @@ Status keys: ✅ Completed · 🟡 Partially completed · ❌ Not implemented ·
   - Code: `ExportJobRepository` and `ExportJobService`.
   - Persistence is best-effort, so exports still work if the table is missing.
   - 🟡 **Pending:** run `database/phase3-migration.sql` as `neondb_owner` in the Neon SQL Editor. Until then, jobs are kept in memory only and a warning is logged.
-- ✅ **Query Analytics (ADMIN only)** at `/datatalk/analytics` and `GET /api/admin/analytics`:
+- ✅ **Query Analytics (ADMIN only)** at `/sltalk/analytics` and `GET /api/admin/analytics`:
   - Total, successful and failed questions, and active users.
   - Average AI answer time and average SQL-only time.
   - Answer source, failure reasons, popular reports, AI provider usage, and export job counts.

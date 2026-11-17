@@ -1,6 +1,6 @@
-/* DataTalk AI - Customers, Devices, Locations and Transactions pages: list, read-only details, create/edit forms.
+/* SL Talk AI - Customers, Devices, Locations and Transactions pages: list, read-only details, create/edit forms.
    ?id=N shows the read-only details; editing only happens after clicking Edit. */
-const BASE = '/datatalk';
+const BASE = '/sltalk';
 const API = BASE + '/api';
 const PAGE = document.body.dataset.page;
 let isAdmin = false;

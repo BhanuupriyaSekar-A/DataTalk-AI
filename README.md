@@ -1,8 +1,8 @@
-# DataTalk AI – Natural-Language Reporting POC
+# SL Talk AI – Natural-Language Reporting POC
 
-> **Built by Vijay | DataTalk AI**
+> **Built by Vijay | SL Talk AI**
 
-DataTalk AI is a personal proof of concept. Users log in, ask business questions in plain English, and get
+SL Talk AI is a personal proof of concept. Users log in, ask business questions in plain English, and get
 database-backed reports. An AI model generates PostgreSQL SQL. The backend validates it, applies the user's
 role and customer restrictions, and runs it read-only. The results are shown as a table and chart, and can be
 exported to PDF or Excel.
@@ -70,11 +70,11 @@ The full list of settings and defaults is in `src/main/resources/application.pro
 mvn spring-boot:run          # or run DataTalkAiApplication from IntelliJ
 mvn test                     # 32 tests; LoginAndAccessIntegrationTest needs the database
 ```
-Open **http://localhost:8081/datatalk/login**. The port is set by `server.port` and the context path is `/datatalk`.
+Open **http://localhost:8081/sltalk/login**. The port is set by `server.port` and the context path is `/sltalk`.
 
 ### Public URL (automatic, ngrok)
 When the app starts it automatically launches an ngrok tunnel (`tunnel/NgrokTunnel.java`) and logs:
-`==> ngrok tunnel started: public URL https://<your-ngrok-domain>/datatalk/login`. Stopping the app stops ngrok.
+`==> ngrok tunnel started: public URL https://<your-ngrok-domain>/sltalk/login`. Stopping the app stops ngrok.
 One-time setup: install ngrok and run `ngrok config add-authtoken <token>` from your ngrok dashboard.
 Settings (in `.env` or environment): `NGROK_ENABLED` (default `true`; set `false` to turn off), `NGROK_DOMAIN`
 (optional fixed domain), `NGROK_COMMAND` (path to ngrok). The ngrok output goes to `logs/ngrok.log`.
@@ -99,8 +99,8 @@ Demo passwords and the reset procedure are in [docs/DEMO_USERS_GUIDE.md](docs/DE
 - 11 predefined reports covering payments, devices, settlements and customers.
 - Chat history and saved conversation context. Repeated questions reuse cached SQL.
 - PDF and Excel export. Large exports run in the background, and export jobs are stored in `app.export_job`.
-- **Query Analytics** (ADMIN only, `/datatalk/analytics`): questions, success and failure counts, timings, popular reports and provider usage.
-- POC information page at `/datatalk/poc-info`.
+- **Query Analytics** (ADMIN only, `/sltalk/analytics`): questions, success and failure counts, timings, popular reports and provider usage.
+- POC information page at `/sltalk/poc-info`.
 
 ## Project layout (short)
 ```
@@ -119,7 +119,7 @@ The full structure is in [docs/PROJECT_STRUCTURE_AND_FILE_DETAILS.md](docs/PROJE
 - **Slow or failed AI answers:** the app falls back to the next provider automatically. The badge on each answer shows which provider was used.
 - **"Export job persistence failed – run database/phase3-migration.sql"** in the log: exports still work, but jobs are not stored until that script is run.
 - **Port in use:** `mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8091`.
-- **Logs:** `logs/datatalk-ai.log`.
+- **Logs:** `logs/sltalk-ai.log`.
 
 ## Disclaimer
 This is a POC that uses synthetic data only. It has not been load-tested or security-certified for production use.

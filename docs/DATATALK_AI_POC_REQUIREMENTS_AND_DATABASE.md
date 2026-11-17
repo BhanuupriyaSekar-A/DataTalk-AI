@@ -1,9 +1,9 @@
-# DataTalk AI – POC Requirements and Database Specification
+# SL Talk AI – POC Requirements and Database Specification
 
 | Item | Detail |
 |------|--------|
 | Document type | Requirements for building a **proof of concept (POC)** |
-| Prepared by | Vijay – Built by Vijay \| DataTalk AI |
+| Prepared by | Vijay – Built by Vijay \| SL Talk AI |
 | Audience | Company AI/ML and development teams |
 | Scope | POC level only – not a production specification |
 | Related document | `DATATALK_AI_BUSINESS_AND_TECHNICAL_REQUIREMENTS.md` (full business and technical proposal) |

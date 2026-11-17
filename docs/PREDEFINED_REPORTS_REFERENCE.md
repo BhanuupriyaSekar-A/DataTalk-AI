@@ -1,4 +1,4 @@
-# DataTalk AI – Predefined Reports Reference
+# SL Talk AI – Predefined Reports Reference
 
 This document describes the 11 predefined SQL reports shipped with the POC, how they are loaded, secured,
 executed and exposed, and how to add a new one. Everything here is derived from the source code:
@@ -255,7 +255,7 @@ Errors: `401 NOT_AUTHENTICATED`, `403 INACTIVE_USER` / `NO_CUSTOMER` / table not
 
 ### UI (chat page)
 
-- The left sidebar card **"Predefined Reports"** (`#reportList` in `chat.html`) is filled by
+- The left panel **"Instant Reports"** (`#reportList` in `chat.html`) is filled by
   `loadReports()` in `chat.js` from `GET /api/reports`, grouped by category; if the list is empty it shows
   "No reports available for your role."
 - Clicking a report calls `runReport(id, name)` → `POST /api/reports/{id}/run` with
@@ -637,6 +637,6 @@ ORDER BY devices DESC
      MANAGER user, and a CUSTOMER user to compare);
    - `POST /api/reports/<id>/run` with `{ "params": { "days": "7" } }` – expect `status: SUCCESS` and
      `source: PREDEFINED`; also try an invalid param (`"0"`, `"abc"`) to see `INVALID_PARAMETER`.
-7. **Test in the UI:** open the chat page – the report appears in the **Predefined Reports** sidebar under its
+7. **Test in the UI:** open the chat page – the report appears in the **Instant Reports** panel under its
    category; click it (defaults are used), try the date/status filters, paging and export.
 8. Optionally add the report to this document and to the summary table.

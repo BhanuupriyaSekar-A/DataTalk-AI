@@ -1,18 +1,22 @@
-# DataTalk AI - Demo Users Guide
+# SL Talk AI - Demo Users Guide
 
 ## Overview
-This document provides information about demo users available for testing the DataTalk AI application.
+This document provides information about demo users available for testing the SL Talk AI application.
 
 ## All Demo Users
 
 | Username | Full Name | Role | Customer | Customer ID | Password | Status |
 |----------|-----------|------|----------|-------------|----------|--------|
-| `admin_user` | Admin System | ADMIN | N/A (System-wide) | NULL | `DemoPass@123` | ACTIVE |
-| `techpay_manager` | John Manager | BUSINESS | TechPay Solutions | 1 | `DemoPass@123` | ACTIVE |
-| `techpay_customer` | Sarah Customer | CUSTOMER | TechPay Solutions | 1 | `DemoPass@123` | ACTIVE |
-| `retail_manager` | Mike Retail | MANAGER | RetailHub Inc | 2 | `DemoPass@123` | ACTIVE |
-| `restaurant_owner` | David Chef | BUSINESS | Restaurant Group USA | 3 | `DemoPass@123` | ACTIVE |
-| `gas_operator` | Emma Operator | CUSTOMER | Gas Station Network | 4 | `DemoPass@123` | ACTIVE |
+| `admin_user` | Bhanupriya | ADMIN | N/A (System-wide) | NULL | `DemoPass@123` | ACTIVE |
+| `techpay_manager` | Arjun Mehta | BUSINESS | TechPay Solutions | 1 | `DemoPass@123` | ACTIVE |
+| `techpay_customer` | Priya Raman | CUSTOMER | TechPay Solutions | 1 | `DemoPass@123` | ACTIVE |
+| `retail_manager` | Michael Carter | MANAGER | RetailHub Inc | 2 | `DemoPass@123` | ACTIVE |
+| `restaurant_owner` | Daniel Brooks | BUSINESS | Restaurant Group USA | 3 | `DemoPass@123` | ACTIVE |
+| `gas_operator` | Emily Watson | CUSTOMER | Gas Station Network | 4 | `DemoPass@123` | ACTIVE |
+
+The navbar shows each user's full name with a readable role title: ADMIN → *Administrator*, BUSINESS → *Business Manager*,
+MANAGER → *Store Manager*, CUSTOMER → *Customer Analyst* (display only; authorization uses the role codes).
+Existing databases seeded before this change can be updated with `database/phase6-user-names.sql`.
 
 ## Role Definitions
 
@@ -170,7 +174,7 @@ To generate a BCrypt hash, you can use:
 ## Login Testing Sequence
 
 ### Quick Test Path:
-1. Start application: `http://localhost:8081/datatalk`
+1. Start application: `http://localhost:8081/sltalk`
 2. Click **Login** on homepage
 3. Try each demo user:
    - `admin_user` / `DemoPass@123` → See system-wide dashboard
@@ -180,16 +184,16 @@ To generate a BCrypt hash, you can use:
 ### API Testing:
 ```bash
 # Login API
-curl -X POST http://localhost:8081/datatalk/api/login \
+curl -X POST http://localhost:8081/sltalk/api/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin_user", "password": "DemoPass@123"}'
 
 # Get User Info
-curl -X GET http://localhost:8081/datatalk/api/user-info \
+curl -X GET http://localhost:8081/sltalk/api/user-info \
   -H "Cookie: JSESSIONID=<session_id>"
 
 # Logout
-curl -X POST http://localhost:8081/datatalk/api/logout \
+curl -X POST http://localhost:8081/sltalk/api/logout \
   -H "Cookie: JSESSIONID=<session_id>"
 ```
 
